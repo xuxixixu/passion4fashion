@@ -1,0 +1,398 @@
+<!--pages/profile/profile.ttml-->
+<scroll-view scroll-y="true" style="height: 100vh;">
+  <view class="container">
+  <!-- 装饰背景 -->
+  <view class="decoration-bg">
+    <view class="floating-gem gem-1">💎</view>
+    <view class="floating-gem gem-2">👑</view>
+    <view class="floating-gem gem-3">✨</view>
+    <view class="floating-gem gem-4">🌟</view>
+    <view class="floating-gem gem-5">💫</view>
+  </view>
+
+  <!-- 未登录状态 -->
+  <view class="not-logged-in" wx:if="{{!isLoggedIn}}">
+    <view class="login-prompt">
+      <view class="prompt-icon">🔐</view>
+      <text class="prompt-title">请先登录</text>
+      <text class="prompt-subtitle">登录后即可查看和管理个人信息</text>
+      <button class="login-btn" bindtap="goToLogin">
+        <text class="btn-text">立即登录</text>
+        <text class="btn-emoji">🚀</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 已登录状态 -->
+  <scroll-view class="content-container" scroll-y wx:if="{{isLoggedIn}}">
+    
+    <!-- 用户头像和基本信息 -->
+    <view class="profile-header">
+      <view class="avatar-section">
+        <view class="avatar-container" bindtap="uploadAvatar">
+          <image 
+            class="avatar-image" 
+            src="{{avatarUrl || '/static/default-avatar.png'}}"
+            mode="aspectFill"
+          />
+          <view class="avatar-edit-badge">
+            <text>📷</text>
+          </view>
+          <view class="avatar-glow"></view>
+        </view>
+        <view class="user-basic-info">
+          <text class="user-nickname">{{userInfo.nickname || '时尚达人'}}</text>
+          <text class="user-phone">{{userInfo.phone}}</text>
+          <view class="user-signature">
+            <text>{{userInfo.signature || '还没有个性签名~'}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 用户统计 -->
+      <view class="stats-section">
+        <view class="stat-item">
+          <text class="stat-number">{{userStats.analysisCount}}</text>
+          <text class="stat-label">AI分析</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-number">{{userStats.wardrobeCount}}</text>
+          <text class="stat-label">衣橱单品</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-number">{{userStats.points}}</text>
+          <text class="stat-label">积分</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 快速功能区 -->
+    <view class="quick-actions">
+      <view class="section-title">
+        <text>⚡ 快速功能</text>
+      </view>
+      <view class="action-grid">
+        <view class="action-item" bindtap="goToWardrobe">
+          <view class="action-icon wardrobe">👗</view>
+          <text class="action-text">智能衣橱</text>
+        </view>
+        <view class="action-item" bindtap="goToAnalysis">
+          <view class="action-icon analysis">🎯</view>
+          <text class="action-text">AI分析</text>
+        </view>
+        <view class="action-item" bindtap="openSettings">
+          <view class="action-icon settings">⚙️</view>
+          <text class="action-text">设置</text>
+        </view>
+        <view class="action-item" bindtap="openHelp">
+          <view class="action-icon help">❓</view>
+          <text class="action-text">帮助</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 个人信息编辑 -->
+    <view class="profile-info">
+      <view class="section-header">
+        <text class="section-title">📝 个人信息</text>
+        <view class="edit-toggle" bindtap="{{isEditing ? 'cancelEdit' : 'startEdit'}}">
+          <text class="edit-text">{{isEditing ? '取消' : '编辑'}}</text>
+        </view>
+      </view>
+
+      <view class="info-form">
+        <!-- 昵称 -->
+        <view class="form-item">
+          <text class="form-label">昵称</text>
+          <view class="form-value">
+            <input 
+              wx:if="{{isEditing}}"
+              class="form-input"
+              placeholder="请输入昵称"
+              value="{{editForm.nickname}}"
+              bindinput="onInputChange"
+              data-field="nickname"
+              maxlength="50"
+            />
+            <text wx:else class="display-value">{{userInfo.nickname || '未设置'}}</text>
+          </view>
+          <view class="form-error" wx:if="{{errors.nickname}}">
+            <text>{{errors.nickname}}</text>
+          </view>
+        </view>
+
+        <!-- 个性签名 -->
+        <view class="form-item">
+          <text class="form-label">个性签名</text>
+          <view class="form-value">
+            <textarea 
+              wx:if="{{isEditing}}"
+              class="form-textarea"
+              placeholder="写下你的个性签名..."
+              value="{{editForm.signature}}"
+              bindinput="onInputChange"
+              data-field="signature"
+              maxlength="200"
+              auto-height
+            />
+            <text wx:else class="display-value signature">{{userInfo.signature || '还没有个性签名~'}}</text>
+          </view>
+          <view class="form-error" wx:if="{{errors.signature}}">
+            <text>{{errors.signature}}</text>
+          </view>
+        </view>
+
+        <!-- 性别 -->
+        <view class="form-item">
+          <text class="form-label">性别</text>
+          <view class="form-value">
+            <view 
+              wx:if="{{isEditing}}"
+              class="form-picker"
+              bindtap="showPicker"
+              data-type="Gender"
+            >
+              <text class="picker-text">{{editForm.gender || '请选择性别'}}</text>
+              <text class="picker-arrow">></text>
+            </view>
+            <text wx:else class="display-value">{{userInfo.gender || '未设置'}}</text>
+          </view>
+        </view>
+
+        <!-- 身高 -->
+        <view class="form-item">
+          <text class="form-label">身高</text>
+          <view class="form-value">
+            <view class="input-with-unit" wx:if="{{isEditing}}">
+              <input 
+                class="form-input number-input"
+                type="digit"
+                placeholder="请输入身高"
+                value="{{editForm.height}}"
+                bindinput="onInputChange"
+                data-field="height"
+              />
+              <text class="input-unit">cm</text>
+            </view>
+            <text wx:else class="display-value">{{userInfo.height ? userInfo.height + 'cm' : '未设置'}}</text>
+          </view>
+          <view class="form-error" wx:if="{{errors.height}}">
+            <text>{{errors.height}}</text>
+          </view>
+        </view>
+
+        <!-- 体重 -->
+        <view class="form-item">
+          <text class="form-label">体重</text>
+          <view class="form-value">
+            <view class="input-with-unit" wx:if="{{isEditing}}">
+              <input 
+                class="form-input number-input"
+                type="digit"
+                placeholder="请输入体重"
+                value="{{editForm.weight}}"
+                bindinput="onInputChange"
+                data-field="weight"
+              />
+              <text class="input-unit">kg</text>
+            </view>
+            <text wx:else class="display-value">{{userInfo.weight ? userInfo.weight + 'kg' : '未设置'}}</text>
+          </view>
+          <view class="form-error" wx:if="{{errors.weight}}">
+            <text>{{errors.weight}}</text>
+          </view>
+        </view>
+
+        <!-- 体型 -->
+        <view class="form-item">
+          <text class="form-label">体型</text>
+          <view class="form-value">
+            <view 
+              wx:if="{{isEditing}}"
+              class="form-picker"
+              bindtap="showPicker"
+              data-type="BodyShape"
+            >
+              <text class="picker-text">{{editForm.body_shape || '请选择体型'}}</text>
+              <text class="picker-arrow">></text>
+            </view>
+            <text wx:else class="display-value">{{userInfo.body_shape || '未设置'}}</text>
+          </view>
+        </view>
+
+        <!-- 肤色 -->
+        <view class="form-item">
+          <text class="form-label">肤色类型</text>
+          <view class="form-value">
+            <view 
+              wx:if="{{isEditing}}"
+              class="form-picker"
+              bindtap="showPicker"
+              data-type="SkinTone"
+            >
+              <text class="picker-text">{{editForm.skin_tone || '请选择肤色类型'}}</text>
+              <text class="picker-arrow">></text>
+            </view>
+            <text wx:else class="display-value">{{userInfo.skin_tone || '未设置'}}</text>
+          </view>
+        </view>
+
+        <!-- 保存按钮 -->
+        <view class="save-section" wx:if="{{isEditing}}">
+          <button 
+            class="save-btn {{isLoading ? 'loading' : ''}}"
+            bindtap="saveProfile"
+            disabled="{{isLoading}}"
+          >
+            <view wx:if="{{!isLoading}}" class="btn-content">
+              <text class="btn-text">保存信息</text>
+              <text class="btn-emoji">💾</text>
+            </view>
+            <view wx:else class="btn-loading">
+              <view class="loading-spinner"></view>
+              <text class="loading-text">保存中...</text>
+            </view>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 其他功能 -->
+    <view class="other-functions">
+      <view class="section-title">
+        <text>🔧 其他功能</text>
+      </view>
+      
+      <view class="function-list">
+        <view class="function-item" bindtap="changePassword">
+          <view class="function-icon">🔒</view>
+          <text class="function-text">修改密码</text>
+          <text class="function-arrow">></text>
+        </view>
+        
+        <view class="function-item" bindtap="openAbout">
+          <view class="function-icon">ℹ️</view>
+          <text class="function-text">关于我们</text>
+          <text class="function-arrow">></text>
+        </view>
+        
+        <view class="function-item logout-item" bindtap="logout">
+          <view class="function-icon">🚪</view>
+          <text class="function-text">退出登录</text>
+          <text class="function-arrow">></text>
+        </view>
+      </view>
+    </view>
+
+  </scroll-view>
+
+  <!-- 底部导航栏 -->
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="switchTab" data-tab="index">
+      <view class="nav-icon">🏠</view>
+      <text class="nav-text">首页</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchTab" data-tab="analysis">
+      <view class="nav-icon">🎯</view>
+      <text class="nav-text">AI分析</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchTab" data-tab="wardrobe">
+      <view class="nav-icon">👗</view>
+      <text class="nav-text">衣橱</text>
+    </view>
+    
+    <view class="nav-item nav-active" bindtap="switchTab" data-tab="profile">
+      <view class="nav-icon">👤</view>
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+</view>
+
+<!-- 性别选择器 -->
+<view class="picker-overlay" wx:if="{{showGenderPicker}}" bindtap="hidePicker" data-type="Gender">
+  <view class="picker-content" catchtap>
+    <view class="picker-header">
+      <text class="picker-title">选择性别</text>
+      <view class="picker-close" bindtap="hidePicker" data-type="Gender">×</view>
+    </view>
+    <view class="picker-options">
+      <view 
+        class="picker-option {{editForm.gender === item.value ? 'selected' : ''}}"
+        wx:for="{{genderOptions}}"
+        wx:key="value"
+        bindtap="selectOption"
+        data-type="Gender"
+        data-value="{{item.value}}"
+      >
+        <text class="option-icon">{{item.icon}}</text>
+        <text class="option-text">{{item.label}}</text>
+        <text class="option-check" wx:if="{{editForm.gender === item.value}}">✓</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 体型选择器 -->
+<view class="picker-overlay" wx:if="{{showBodyShapePicker}}" bindtap="hidePicker" data-type="BodyShape">
+  <view class="picker-content" catchtap>
+    <view class="picker-header">
+      <text class="picker-title">选择体型</text>
+      <view class="picker-close" bindtap="hidePicker" data-type="BodyShape">×</view>
+    </view>
+    <view class="picker-options">
+      <view 
+        class="picker-option {{editForm.body_shape === item.value ? 'selected' : ''}}"
+        wx:for="{{bodyShapeOptions}}"
+        wx:key="value"
+        bindtap="selectOption"
+        data-type="BodyShape"
+        data-value="{{item.value}}"
+      >
+        <view class="option-content">
+          <text class="option-text">{{item.label}}</text>
+          <text class="option-desc">{{item.desc}}</text>
+        </view>
+        <text class="option-check" wx:if="{{editForm.body_shape === item.value}}">✓</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 肤色选择器 -->
+<view class="picker-overlay" wx:if="{{showSkinTonePicker}}" bindtap="hidePicker" data-type="SkinTone">
+  <view class="picker-content" catchtap>
+    <view class="picker-header">
+      <text class="picker-title">选择肤色类型</text>
+      <view class="picker-close" bindtap="hidePicker" data-type="SkinTone">×</view>
+    </view>
+    <view class="picker-options">
+      <view 
+        class="picker-option {{editForm.skin_tone === item.value ? 'selected' : ''}}"
+        wx:for="{{skinToneOptions}}"
+        wx:key="value"
+        bindtap="selectOption"
+        data-type="SkinTone"
+        data-value="{{item.value}}"
+      >
+        <view class="option-content">
+          <text class="option-text">{{item.label}}</text>
+          <text class="option-desc">{{item.desc}}</text>
+        </view>
+        <text class="option-check" wx:if="{{editForm.skin_tone === item.value}}">✓</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- AI悬浮球 -->
+<ai-floating-bot 
+  visible="{{true}}"
+  is-online="{{true}}"
+  message-count="{{0}}"
+  bind:botclick="onAIBotClick"
+  pageContext="profile">
+</ai-floating-bot>

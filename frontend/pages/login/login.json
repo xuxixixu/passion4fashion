@@ -1,0 +1,10 @@
+{
+    "navigationBarTitleText": "登录",
+    "navigationBarBackgroundColor": "#ff6b9d",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#ffeaa7",
+    "enablePullDownRefresh": false,
+    "onReachBottomDistance": 50,
+    "backgroundColorTop": "#ff6b9d",
+    "backgroundColorBottom": "#764ba2"
+  }

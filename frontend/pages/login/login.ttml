@@ -1,0 +1,189 @@
+<!--pages/login/login.ttml-->
+<scroll-view class="container" scroll-y>
+    <!-- 装饰背景 -->
+    <view class="decoration-bg">
+      <view class="floating-shape shape-1">💎</view>
+      <view class="floating-shape shape-2">✨</view>
+      <view class="floating-shape shape-3">🌟</view>
+      <view class="floating-shape shape-4">💫</view>
+    </view>
+  
+    <!-- 顶部品牌区域 -->
+    <view class="brand-section">
+      <view class="brand-logo">
+        <view class="logo-icon">👗</view>
+        <view class="logo-sparkle">✨</view>
+      </view>
+      <view class="brand-text">
+        <text class="brand-title">AI穿搭助手</text>
+        <text class="brand-subtitle">发现你的时尚魅力</text>
+      </view>
+    </view>
+  
+    <!-- 欢迎文字 -->
+    <view class="welcome-section">
+      <text class="welcome-title">欢迎回来！</text>
+      <text class="welcome-subtitle">让我们继续你的时尚之旅</text>
+    </view>
+  
+    <!-- 登录表单 -->
+    <view class="login-form">
+      <!-- 手机号输入 -->
+      <view class="input-group">
+        <view class="input-container">
+          <view class="input-icon">📱</view>
+          <input 
+            class="form-input"
+            type="number"
+            placeholder="请输入手机号"
+            value="{{phone}}"
+            bindinput="onPhoneInput"
+            maxlength="11"
+            placeholder-class="input-placeholder"
+          />
+          <view class="input-clear {{phone ? 'show' : ''}}" bindtap="clearPhone">
+            <text>×</text>
+          </view>
+        </view>
+        <view class="input-error" wx:if="{{phoneError}}">
+          <text>{{phoneError}}</text>
+        </view>
+      </view>
+  
+      <!-- 密码输入 -->
+      <view class="input-group">
+        <view class="input-container">
+          <view class="input-icon">🔒</view>
+          <input 
+            class="form-input"
+            type="{{showPassword ? 'text' : 'password'}}"
+            placeholder="请输入密码"
+            value="{{password}}"
+            bindinput="onPasswordInput"
+            maxlength="50"
+            placeholder-class="input-placeholder"
+          />
+          <view class="input-toggle" bindtap="togglePassword">
+            <text>{{showPassword ? '🙈' : '👁️'}}</text>
+          </view>
+        </view>
+        <view class="input-error" wx:if="{{passwordError}}">
+          <text>{{passwordError}}</text>
+        </view>
+      </view>
+  
+      <!-- 记住我和忘记密码 -->
+      <view class="form-options">
+        <view class="remember-me" bindtap="toggleRemember">
+          <view class="checkbox {{rememberMe ? 'checked' : ''}}">
+            <text wx:if="{{rememberMe}}">✓</text>
+          </view>
+          <text class="checkbox-label">记住我</text>
+        </view>
+        <view class="forgot-password" bindtap="forgotPassword">
+          <text>忘记密码？</text>
+        </view>
+      </view>
+  
+      <!-- 登录按钮 -->
+      <button 
+        class="login-btn {{isLoading ? 'loading' : ''}}"
+        bindtap="handleLogin"
+        disabled="{{isLoading}}"
+      >
+        <view wx:if="{{!isLoading}}" class="btn-content">
+          <text class="btn-text">立即登录</text>
+          <text class="btn-emoji">🚀</text>
+        </view>
+        <view wx:else class="btn-loading">
+          <view class="loading-spinner"></view>
+          <text class="loading-text">登录中...</text>
+        </view>
+      </button>
+    </view>
+  
+    <!-- 分割线 -->
+    <view class="divider-section">
+      <view class="divider-line"></view>
+      <text class="divider-text">或者</text>
+      <view class="divider-line"></view>
+    </view>
+  
+    <!-- 快速登录方式 -->
+    <view class="quick-login">
+      <view class="quick-title">
+        <text>快速登录</text>
+      </view>
+      <view class="quick-methods">
+        <view class="quick-method" bindtap="wechatLogin">
+          <view class="method-icon wechat">💚</view>
+          <text class="method-text">微信</text>
+        </view>
+        <view class="quick-method" bindtap="phoneCodeLogin">
+          <view class="method-icon phone">📲</view>
+          <text class="method-text">验证码</text>
+        </view>
+        <view class="quick-method" bindtap="toutiaoLogin">
+          <view class="method-icon toutiao">🎯</view>
+          <text class="method-text">抖音</text>
+        </view>
+      </view>
+    </view>
+  
+    <!-- 注册入口 -->
+    <view class="register-section">
+      <text class="register-text">还没有账号？</text>
+      <text class="register-link" bindtap="goToRegister">立即注册</text>
+    </view>
+  
+    <!-- 用户协议 -->
+    <view class="agreement-section">
+      <text class="agreement-text">
+        登录即表示同意
+        <text class="agreement-link" bindtap="showUserAgreement">《用户协议》</text>
+        和
+        <text class="agreement-link" bindtap="showPrivacyPolicy">《隐私政策》</text>
+      </text>
+    </view>
+  
+    <!-- 时尚装饰元素 -->
+    <view class="fashion-elements">
+      <view class="fashion-item item-1">👠</view>
+      <view class="fashion-item item-2">💄</view>
+      <view class="fashion-item item-3">👜</view>
+      <view class="fashion-item item-4">💍</view>
+    </view>
+</scroll-view>
+
+<!-- 忘记密码弹窗 -->
+<view class="modal-overlay" wx:if="{{showForgotModal}}" bindtap="closeForgotModal">
+  <view class="modal-content" catchtap="preventClose">
+    <view class="modal-header">
+      <text class="modal-title">忘记密码</text>
+      <view class="modal-close" bindtap="closeForgotModal">×</view>
+    </view>
+    <view class="modal-body">
+      <view class="modal-text">
+        <text>请联系客服找回密码</text>
+      </view>
+      <view class="contact-methods">
+        <view class="contact-item" bindtap="contactService">
+          <text class="contact-icon">💬</text>
+          <text class="contact-text">在线客服</text>
+        </view>
+        <view class="contact-item" bindtap="callService">
+          <text class="contact-icon">📞</text>
+          <text class="contact-text">客服电话</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- AI悬浮球 -->
+  <ai-floating-bot 
+    visible="{{true}}"
+    is-online="{{true}}"
+    message-count="{{0}}"
+    bindtap:botclick="onAIBotClick">
+  </ai-floating-bot>
+</view>

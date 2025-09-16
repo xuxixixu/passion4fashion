@@ -1,0 +1,72 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/analysis/analysis",
+    "pages/wardrobe/wardrobe", 
+    "pages/profile/profile",
+    "pages/login/login",
+    "pages/register/register"
+  ],
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#ff6b9d",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "white",
+    "position": "bottom",
+    "custom": true,
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/icons/home.png",
+        "selectedIconPath": "static/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/analysis/analysis", 
+        "text": "AI分析",
+        "iconPath": "static/icons/analysis.png",
+        "selectedIconPath": "static/icons/analysis-active.png"
+      },
+      {
+        "pagePath": "pages/wardrobe/wardrobe",
+        "text": "衣橱", 
+        "iconPath": "static/icons/wardrobe.png",
+        "selectedIconPath": "static/icons/wardrobe-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "static/icons/profile.png", 
+        "selectedIconPath": "static/icons/profile-active.png"
+      }
+    ]
+  },
+  "window": {
+    "navigationBarBackgroundColor": "#ff6b9d",
+    "navigationBarTextStyle": "white",
+    "navigationBarTitleText": "AI上你的Style",
+    "backgroundColor": "#f8f8f8",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": true,
+    "onReachBottomDistance": 50
+  },
+  "networkTimeout": {
+    "request": 600000,
+    "downloadFile": 600000,
+    "uploadFile": 600000,
+    "connectSocket":60000
+  },
+  "debug": true,
+  "requiredBackgroundModes": ["audio"],
+  "plugins": {},
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": []
+    }
+  },
+  "subpackages": [],
+  "usingComponents": {
+    "ai-floating-bot": "/components/ai-floating-bot/ai-floating-bot"
+  }
+}

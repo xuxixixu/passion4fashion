@@ -1,0 +1,41 @@
+{
+    "desc": "关于本文件的更多信息，请参考文档 https://developer.toutiao.com/",
+    "rules": [
+      {
+        "action": "allow",
+        "page": "pages/index/index",
+        "params": ["*"],
+        "matching": "exact"
+      },
+      {
+        "action": "allow", 
+        "page": "pages/analysis/analysis",
+        "params": ["*"],
+        "matching": "exact"
+      },
+      {
+        "action": "disallow",
+        "page": "pages/profile/profile",
+        "params": ["*"],
+        "matching": "exact"
+      },
+      {
+        "action": "disallow",
+        "page": "pages/wardrobe/wardrobe", 
+        "params": ["*"],
+        "matching": "exact"
+      },
+      {
+        "action": "disallow",
+        "page": "pages/login/login",
+        "params": ["*"],
+        "matching": "exact"
+      },
+      {
+        "action": "disallow",
+        "page": "pages/register/register",
+        "params": ["*"],
+        "matching": "exact"
+      }
+    ]
+  }

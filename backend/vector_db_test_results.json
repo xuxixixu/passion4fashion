@@ -1,0 +1,79 @@
+[
+  {
+    "test": "导入服务模块",
+    "status": "✅ PASS",
+    "message": "成功导入VectorDatabaseService和DoubaoEmbeddingClient",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:34.855471"
+  },
+  {
+    "test": "初始化服务",
+    "status": "✅ PASS",
+    "message": "成功初始化，API密钥: 60ea24a5****",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.059380"
+  },
+  {
+    "test": "ChromaDB连接",
+    "status": "✅ PASS",
+    "message": "连接成功，状态: {'products_count': 0, 'influencers_count': 0, 'status': 'healthy'}",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.061171"
+  },
+  {
+    "test": "Embedding客户端",
+    "status": "❌ FAIL",
+    "message": "客户端测试失败",
+    "error": "Client error '400 Bad Request' for url 'https://ark.cn-beijing.volces.com/api/v3/embeddings'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+    "timestamp": "2025-09-15T19:42:35.213116"
+  },
+  {
+    "test": "添加商品",
+    "status": "❌ FAIL",
+    "message": "添加商品失败",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.321718"
+  },
+  {
+    "test": "添加博主",
+    "status": "❌ FAIL",
+    "message": "添加博主失败",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.432207"
+  },
+  {
+    "test": "搜索商品",
+    "status": "❌ FAIL",
+    "message": "搜索返回空结果",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.543360"
+  },
+  {
+    "test": "搜索博主",
+    "status": "❌ FAIL",
+    "message": "搜索返回空结果",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.670933"
+  },
+  {
+    "test": "更新操作",
+    "status": "❌ FAIL",
+    "message": "更新商品失败",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.792496"
+  },
+  {
+    "test": "删除操作",
+    "status": "✅ PASS",
+    "message": "成功删除测试数据",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.803015"
+  },
+  {
+    "test": "集合统计",
+    "status": "✅ PASS",
+    "message": "统计信息: {'products_count': 0, 'influencers_count': 0, 'status': 'healthy'}",
+    "error": null,
+    "timestamp": "2025-09-15T19:42:35.803568"
+  }
+]

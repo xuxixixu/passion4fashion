@@ -1,0 +1,884 @@
+<!--pages/wardrobe/wardrobe.ttml-->
+<scroll-view scroll-y="true" style="height: 100vh;">
+  <view class="container">
+  <!-- 装饰背景 -->
+  <view class="decoration-bg">
+    <view class="floating-gem gem-1">👗</view>
+    <view class="floating-gem gem-2">👠</view>
+    <view class="floating-gem gem-3">👜</view>
+    <view class="floating-gem gem-4">💍</view>
+    <view class="floating-gem gem-5">🎀</view>
+    <view class="floating-gem gem-6">💄</view>
+  </view>
+
+  <!-- 未登录状态 -->
+  <view class="not-logged-in" tt:if="{{!isLoggedIn}}">
+    <view class="login-prompt">
+      <view class="prompt-icon">👗</view>
+      <text class="prompt-title">时尚衣橱等你开启</text>
+      <text class="prompt-subtitle">登录后即可管理你的专属衣橱</text>
+      <button class="login-btn" bindtap="goToLogin">
+        <text class="btn-text">立即登录</text>
+        <text class="btn-emoji">✨</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 已登录状态 -->
+  <scroll-view class="content-container" scroll-y tt:if="{{isLoggedIn}}">
+    
+    <!-- 页面头部 -->
+    <view class="page-header">
+      <view class="header-title">
+        <text class="title-text">我的衣橱</text>
+        <text class="title-emoji">👗</text>
+      </view>
+      
+      <!-- 快速统计 -->
+      <view class="quick-stats">
+        <view class="stat-item">
+          <text class="stat-number">{{statistics.total_items}}</text>
+          <text class="stat-label">件单品</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-number">{{statistics.favorite_count}}</text>
+          <text class="stat-label">个收藏</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-number">{{statistics.total_value}}</text>
+          <text class="stat-label">总价值</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 视图切换栏 -->
+    <view class="view-tabs">
+      <view 
+        class="tab-item {{currentView === 'list' ? 'active' : ''}}"
+        bindtap="switchView"
+        data-view="list"
+      >
+        <text class="tab-icon">📦</text>
+        <text class="tab-text">物品列表</text>
+      </view>
+      
+      <view 
+        class="tab-item {{currentView === 'add' ? 'active' : ''}}"
+        bindtap="switchView"
+        data-view="add"
+      >
+        <text class="tab-icon">➕</text>
+        <text class="tab-text">添加新品</text>
+      </view>
+      
+      <view 
+        class="tab-item {{currentView === 'stats' ? 'active' : ''}}"
+        bindtap="switchView"
+        data-view="stats"
+      >
+        <text class="tab-icon">📊</text>
+        <text class="tab-text">数据统计</text>
+      </view>
+    </view>
+
+    <!-- 列表视图 -->
+    <view class="list-view" tt:if="{{currentView === 'list'}}">
+      
+      <!-- 搜索和筛选栏 -->
+      <view class="search-filter-bar">
+        <view class="search-box">
+          <input 
+            class="search-input"
+            placeholder="搜索品牌、颜色..."
+            value="{{searchKeyword}}"
+            bindinput="onSearchInput"
+          />
+          <view class="search-icon">🔍</view>
+        </view>
+        
+        <view class="filter-btn {{showFilters ? 'active' : ''}}" bindtap="toggleFilters">
+          <text class="filter-icon">🎛️</text>
+        </view>
+      </view>
+
+      <!-- 筛选器 -->
+      <view class="filters-panel {{showFilters ? 'show' : ''}}" tt:if="{{showFilters}}">
+        <view class="filter-header">
+          <text class="filter-title">筛选条件</text>
+          <view class="filter-actions">
+            <text class="clear-btn" bindtap="clearFilters">清除</text>
+            <text class="apply-btn" bindtap="toggleFilters">完成</text>
+          </view>
+        </view>
+        
+        <view class="filter-groups">
+          <!-- 类型筛选 -->
+          <view class="filter-group">
+            <text class="group-label">服装类型</text>
+            <scroll-view class="type-scroll" scroll-x>
+              <view 
+                class="type-tag {{filters.type === item.value ? 'selected' : ''}}"
+                tt:for="{{filterClothingTypes}}"
+                tt:key="value"
+                bindtap="onFilterChange"
+                data-field="type"
+                data-value="{{item.value}}"
+              >
+                <text class="type-icon">{{item.icon}}</text>
+                <text class="type-text">{{item.label}}</text>
+              </view>
+            </scroll-view>
+          </view>
+
+          <!-- 季节筛选 -->
+          <view class="filter-group">
+            <text class="group-label">适合季节</text>
+            <view class="season-options">
+              <view 
+                class="season-option {{filters.season === item.value ? 'selected' : ''}}"
+                tt:for="{{seasonOptions}}"
+                tt:key="value"
+                bindtap="onFilterChange"
+                data-field="season"
+                data-value="{{item.value}}"
+              >
+                <text>{{item.label}}</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 收藏状态 -->
+          <view class="filter-group">
+            <text class="group-label">收藏状态</text>
+            <view class="favorite-options">
+              <view 
+                class="favorite-option {{filters.is_favorite === null ? 'selected' : ''}}"
+                bindtap="onFilterChange"
+                data-field="is_favorite"
+                data-value=""
+              >
+                <text>全部</text>
+              </view>
+              <view 
+                class="favorite-option {{filters.is_favorite === true ? 'selected' : ''}}"
+                bindtap="onFilterChange"
+                data-field="is_favorite"
+                data-value="true"
+              >
+                <text>💖 已收藏</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 物品列表 -->
+      <view class="items-waterfall">
+        <view class="waterfall-column">
+          <view 
+            class="waterfall-item"
+            tt:for="{{wardrobeItems}}"
+            tt:key="id"
+            tt:if="{{index % 2 === 0}}"
+            bindtap="showItemDetail"
+            bindlongpress="showItemActions"
+            data-item="{{item}}"
+          >
+            <!-- 物品图片 -->
+            <view class="waterfall-image-container">
+              <image 
+                class="waterfall-image" 
+                src="{{item.image_url}}"
+                mode="widthFix"
+                lazy-load
+              />
+              <view class="image-overlay">
+                <view class="overlay-actions">
+                  <!-- 收藏按钮 -->
+                  <view 
+                    class="action-btn favorite-btn {{item.is_favorite ? 'active' : ''}}"
+                    bindtap="toggleFavorite"
+                    data-item="{{item}}"
+                    catchtap
+                  >
+                    <text>{{item.is_favorite ? '💖' : '🤍'}}</text>
+                  </view>
+                  
+                  <!-- 穿戴记录按钮 -->
+                  <view 
+                    class="action-btn wear-btn"
+                    bindtap="recordWear"
+                    data-item="{{item}}"
+                    catchtap
+                  >
+                    <text>👔</text>
+                  </view>
+                </view>
+              </view>
+            </view>
+
+            <!-- 物品信息 -->
+            <view class="waterfall-info">
+              <view class="waterfall-header">
+                <text class="waterfall-name">{{item.name}}</text>
+                <view class="waterfall-type-badge">{{item.type}}</view>
+              </view>
+              
+              <view class="waterfall-details">
+                <text class="waterfall-color">{{item.color}}</text>
+                <text class="waterfall-brand" tt:if="{{item.brand}}">{{item.brand}}</text>
+              </view>
+              
+              <view class="waterfall-stats">
+                <text class="waterfall-wear-count">{{item.wear_count}}次</text>
+                <text class="waterfall-price" tt:if="{{item.purchase_price}}">¥{{item.purchase_price}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="waterfall-column">
+          <view 
+            class="waterfall-item"
+            tt:for="{{wardrobeItems}}"
+            tt:key="id"
+            tt:if="{{index % 2 === 1}}"
+            bindtap="showItemDetail"
+            bindlongpress="showItemActions"
+            data-item="{{item}}"
+          >
+            <!-- 物品图片 -->
+            <view class="waterfall-image-container">
+              <image 
+                class="waterfall-image" 
+                src="{{item.image_url}}"
+                mode="widthFix"
+                lazy-load
+              />
+              <view class="image-overlay">
+                <view class="overlay-actions">
+                  <!-- 收藏按钮 -->
+                  <view 
+                    class="action-btn favorite-btn {{item.is_favorite ? 'active' : ''}}"
+                    bindtap="toggleFavorite"
+                    data-item="{{item}}"
+                    catchtap
+                  >
+                    <text>{{item.is_favorite ? '💖' : '🤍'}}</text>
+                  </view>
+                  
+                  <!-- 穿戴记录按钮 -->
+                  <view 
+                    class="action-btn wear-btn"
+                    bindtap="recordWear"
+                    data-item="{{item}}"
+                    catchtap
+                  >
+                    <text>👔</text>
+                  </view>
+                </view>
+              </view>
+            </view>
+
+            <!-- 物品信息 -->
+            <view class="waterfall-info">
+              <view class="waterfall-header">
+                <text class="waterfall-name">{{item.name}}</text>
+                <view class="waterfall-type-badge">{{item.type}}</view>
+              </view>
+              
+              <view class="waterfall-details">
+                <text class="waterfall-color">{{item.color}}</text>
+                <text class="waterfall-brand" tt:if="{{item.brand}}">{{item.brand}}</text>
+              </view>
+              
+              <view class="waterfall-stats">
+                <text class="waterfall-wear-count">{{item.wear_count}}次</text>
+                <text class="waterfall-price" tt:if="{{item.purchase_price}}">¥{{item.purchase_price}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 加载更多 -->
+      <view class="load-more" tt:if="{{hasMore && !isLoading}}">
+        <text>上拉加载更多 ↑</text>
+      </view>
+      
+      <!-- 加载中 -->
+      <view class="loading-indicator" tt:if="{{isLoading}}">
+        <view class="loading-spinner"></view>
+        <text>加载中...</text>
+      </view>
+
+      <!-- 空状态 -->
+      <view class="empty-state" tt:if="{{!isLoading && wardrobeItems.length === 0}}">
+        <view class="empty-icon">👗</view>
+        <text class="empty-title">还没有添加任何单品</text>
+        <text class="empty-subtitle">快来添加你的第一件时尚单品吧</text>
+        <button class="add-first-btn" bindtap="switchView" data-view="add">
+          <text>添加第一件单品</text>
+          <text>✨</text>
+        </button>
+      </view>
+    </view>
+
+    <!-- 添加视图 -->
+    <view class="add-view" tt:if="{{currentView === 'add'}}">
+      <view class="add-form">
+        
+        <!-- 图片上传 -->
+        <view class="form-section">
+          <text class="section-title">📷 物品照片</text>
+          <view class="image-upload" bindtap="chooseImage">
+            <image 
+              tt:if="{{uploadedImage}}"
+              class="uploaded-image"
+              src="{{uploadedImage}}"
+              mode="aspectFill"
+            />
+            <view tt:else class="upload-placeholder">
+              <text class="upload-icon">📷</text>
+              <text class="upload-text">点击选择图片</text>
+            </view>
+          </view>
+          <view class="form-error" tt:if="{{errors.image}}">
+            <text>{{errors.image}}</text>
+          </view>
+        </view>
+
+        <!-- 基本信息 -->
+        <view class="form-section">
+          <text class="section-title">📝 基本信息</text>
+          
+          <!-- 物品名称 -->
+          <view class="form-item">
+            <text class="form-label">物品名称 *</text>
+            <input 
+              class="form-input"
+              placeholder="请输入物品名称"
+              value="{{addForm.name}}"
+              bindinput="onFormInput"
+              data-field="name"
+              maxlength="100"
+            />
+            <view class="form-error" tt:if="{{errors.name}}">
+              <text>{{errors.name}}</text>
+            </view>
+          </view>
+
+          <!-- 服装类型 -->
+          <view class="form-item">
+            <text class="form-label">服装类型</text>
+            <picker 
+              mode="selector"
+              range="{{clothingTypes}}"
+              range-key="label"
+              bindchange="onPickerChange"
+              data-field="type"
+            >
+              <view class="form-picker">
+                <text class="picker-text">{{addForm.type || '请选择类型'}}</text>
+                <text class="picker-arrow">></text>
+              </view>
+            </picker>
+          </view>
+
+          <!-- 颜色 -->
+          <view class="form-item">
+            <text class="form-label">颜色 *</text>
+            <input 
+              class="form-input"
+              placeholder="请输入颜色"
+              value="{{addForm.color}}"
+              bindinput="onFormInput"
+              data-field="color"
+              maxlength="30"
+            />
+            <view class="form-error" tt:if="{{errors.color}}">
+              <text>{{errors.color}}</text>
+            </view>
+          </view>
+
+          <!-- 品牌 -->
+          <view class="form-item">
+            <text class="form-label">品牌</text>
+            <input 
+              class="form-input"
+              placeholder="请输入品牌"
+              value="{{addForm.brand}}"
+              bindinput="onFormInput"
+              data-field="brand"
+              maxlength="50"
+            />
+          </view>
+
+          <!-- 尺码 -->
+          <view class="form-item">
+            <text class="form-label">尺码</text>
+            <input 
+              class="form-input"
+              placeholder="如：S/M/L 或 160/84A"
+              value="{{addForm.size}}"
+              bindinput="onFormInput"
+              data-field="size"
+              maxlength="20"
+            />
+          </view>
+        </view>
+
+        <!-- 详细信息 -->
+        <view class="form-section">
+          <text class="section-title">📋 详细信息</text>
+          
+          <!-- 材质 -->
+          <view class="form-item">
+            <text class="form-label">材质</text>
+            <input 
+              class="form-input"
+              placeholder="如：棉质、丝绸、羊毛等"
+              value="{{addForm.material}}"
+              bindinput="onFormInput"
+              data-field="material"
+              maxlength="100"
+            />
+          </view>
+
+          <!-- 季节 -->
+          <view class="form-item">
+            <text class="form-label">适合季节</text>
+            <picker 
+              mode="selector"
+              range="{{seasonOptions}}"
+              range-key="label"
+              bindchange="onPickerChange"
+              data-field="season"
+            >
+              <view class="form-picker">
+                <text class="picker-text">{{addForm.season || '请选择季节'}}</text>
+                <text class="picker-arrow">></text>
+              </view>
+            </picker>
+          </view>
+
+          <!-- 场合 -->
+          <view class="form-item">
+            <text class="form-label">适合场合</text>
+            <input 
+              class="form-input"
+              placeholder="如：休闲、正式、约会等"
+              value="{{addForm.occasion}}"
+              bindinput="onFormInput"
+              data-field="occasion"
+              maxlength="50"
+            />
+          </view>
+
+          <!-- 描述 -->
+          <view class="form-item">
+            <text class="form-label">物品描述</text>
+            <textarea 
+              class="form-textarea"
+              placeholder="描述一下这件单品的特点..."
+              value="{{addForm.description}}"
+              bindinput="onFormInput"
+              data-field="description"
+              maxlength="500"
+              auto-height
+            />
+          </view>
+        </view>
+
+        <!-- 购买信息 -->
+        <view class="form-section">
+          <text class="section-title">🛍️ 购买信息</text>
+          
+          <!-- 购买价格 -->
+          <view class="form-item">
+            <text class="form-label">购买价格</text>
+            <view class="input-with-unit">
+              <input 
+                class="form-input number-input"
+                type="digit"
+                placeholder="请输入价格"
+                value="{{addForm.purchase_price}}"
+                bindinput="onFormInput"
+                data-field="purchase_price"
+              />
+              <text class="input-unit">¥</text>
+            </view>
+            <view class="form-error" tt:if="{{errors.purchase_price}}">
+              <text>{{errors.purchase_price}}</text>
+            </view>
+          </view>
+
+          <!-- 购买日期 -->
+          <view class="form-item">
+            <text class="form-label">购买日期</text>
+            <picker 
+              mode="date"
+              value="{{addForm.purchase_date}}"
+              bindchange="onDateChange"
+            >
+              <view class="form-picker">
+                <text class="picker-text">{{addForm.purchase_date || '请选择日期'}}</text>
+                <text class="picker-arrow">></text>
+              </view>
+            </picker>
+          </view>
+
+          <!-- 购买地点 -->
+          <view class="form-item">
+            <text class="form-label">购买地点</text>
+            <input 
+              class="form-input"
+              placeholder="如：天猫、实体店等"
+              value="{{addForm.purchase_place}}"
+              bindinput="onFormInput"
+              data-field="purchase_place"
+              maxlength="100"
+            />
+          </view>
+        </view>
+
+        <!-- 风格标签 -->
+        <view class="form-section">
+          <text class="section-title">🏷️ 风格标签 (已选{{selectedTags.length}}个)</text>
+          <view class="tags-container">
+            <view 
+              class="tag-item {{item.selected ? 'selected' : ''}}"
+              tt:for="{{commonTags}}"
+              tt:key="name"
+              bindtap="toggleTag"
+              data-tag="{{item.name}}"
+              data-index="{{index}}"
+            >
+              <text>{{item.name}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 提交按钮 -->
+        <view class="submit-section">
+          <button 
+            class="submit-btn {{isLoading ? 'loading' : ''}}"
+            bindtap="submitAdd"
+            disabled="{{isLoading}}"
+          >
+            <view tt:if="{{!isLoading}}" class="btn-content">
+              <text class="btn-text">添加到衣橱</text>
+              <text class="btn-emoji">✨</text>
+            </view>
+            <view tt:else class="btn-loading">
+              <view class="loading-spinner"></view>
+              <text class="loading-text">添加中...</text>
+            </view>
+          </button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 统计视图 -->
+    <view class="stats-view" tt:if="{{currentView === 'stats'}}">
+      
+      <!-- 总体统计 -->
+      <view class="stats-overview">
+        <view class="overview-title">
+          <text>📊 衣橱总览</text>
+        </view>
+        
+        <view class="overview-grid">
+          <view class="overview-item">
+            <view class="overview-icon">👗</view>
+            <view class="overview-content">
+              <text class="overview-number">{{statistics.total_items}}</text>
+              <text class="overview-label">总单品数</text>
+            </view>
+          </view>
+          
+          <view class="overview-item">
+            <view class="overview-icon">💖</view>
+            <view class="overview-content">
+              <text class="overview-number">{{statistics.favorite_count}}</text>
+              <text class="overview-label">收藏单品</text>
+            </view>
+          </view>
+          
+          <view class="overview-item">
+            <view class="overview-icon">💰</view>
+            <view class="overview-content">
+              <text class="overview-number">¥{{statistics.total_value}}</text>
+              <text class="overview-label">总价值</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 类型分布 -->
+      <view class="stats-category">
+        <view class="category-title">
+          <text>📈 类型分布</text>
+        </view>
+        
+        <view class="category-chart">
+          <view 
+            class="chart-item"
+            tt:for="{{statistics.items_by_type}}"
+            tt:key="index"
+            tt:for-item="count"
+            tt:for-index="type"
+          >
+            <view class="chart-bar">
+              <view 
+                class="bar-fill"
+                style="width: {{(count / statistics.total_items * 100) || 0}}%"
+              ></view>
+            </view>
+            <view class="chart-info">
+              <text class="chart-type">{{type}}</text>
+              <text class="chart-count">{{count}}件</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 最常穿单品 -->
+      <view class="stats-popular" tt:if="{{statistics.most_worn_item}}">
+        <view class="popular-title">
+          <text>🔥 最常穿单品</text>
+        </view>
+        
+        <view class="popular-item">
+          <image 
+            class="popular-image"
+            src="{{statistics.most_worn_item.image_url}}"
+            mode="aspectFill"
+          />
+          <view class="popular-info">
+            <text class="popular-name">{{statistics.most_worn_item.name}}</text>
+            <text class="popular-stats">已穿戴 {{statistics.most_worn_item.wear_count}} 次</text>
+            <text class="popular-type">{{statistics.most_worn_item.type}} · {{statistics.most_worn_item.color}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 很少穿的单品 -->
+      <view class="stats-unused" tt:if="{{statistics.least_worn_items.length > 0}}">
+        <view class="unused-title">
+          <text>😴 很少穿的单品</text>
+        </view>
+        
+        <scroll-view class="unused-scroll" scroll-x>
+          <view 
+            class="unused-item"
+            tt:for="{{statistics.least_worn_items}}"
+            tt:key="id"
+          >
+            <image 
+              class="unused-image"
+              src="{{item.image_url}}"
+              mode="aspectFill"
+            />
+            <view class="unused-info">
+              <text class="unused-name">{{item.name}}</text>
+              <text class="unused-count">{{item.wear_count || 0}}次</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+  </scroll-view>
+
+  <!-- 底部导航栏 -->
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="switchTab" data-tab="index">
+      <view class="nav-icon">🏠</view>
+      <text class="nav-text">首页</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchTab" data-tab="analysis">
+      <view class="nav-icon">🎯</view>
+      <text class="nav-text">AI分析</text>
+    </view>
+    
+    <view class="nav-item nav-active" bindtap="switchTab" data-tab="wardrobe">
+      <view class="nav-icon">👗</view>
+      <text class="nav-text">衣橱</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchTab" data-tab="profile">
+      <view class="nav-icon">👤</view>
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+</view>
+
+<!-- 物品操作弹窗 -->
+<view class="action-sheet-overlay" tt:if="{{showActionSheet}}" bindtap="hideActionSheet">
+  <view class="action-sheet" catchtap>
+    <view class="action-sheet-header">
+      <text class="sheet-title">选择操作</text>
+      <view class="sheet-close" bindtap="hideActionSheet">×</view>
+    </view>
+    
+    <view class="action-sheet-body">
+      <view class="sheet-item" bindtap="recordWear" data-item="{{selectedItem}}">
+        <view class="sheet-icon">👔</view>
+        <text class="sheet-text">记录穿戴</text>
+      </view>
+      
+      <view class="sheet-item" bindtap="toggleFavorite" data-item="{{selectedItem}}">
+        <view class="sheet-icon">{{selectedItem.is_favorite ? '💔' : '💖'}}</view>
+        <text class="sheet-text">{{selectedItem.is_favorite ? '取消收藏' : '加入收藏'}}</text>
+      </view>
+      
+      <view class="sheet-item delete-item" bindtap="deleteItem">
+        <view class="sheet-icon">🗑️</view>
+        <text class="sheet-text">删除物品</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 商品详情弹窗 -->
+<view class="detail-overlay" tt:if="{{showItemDetail}}" bindtap="hideItemDetail">
+  <view class="detail-modal" catchtap>
+    <view class="detail-header">
+      <text class="detail-title">物品详情</text>
+      <view class="detail-close" bindtap="hideItemDetail">×</view>
+    </view>
+    
+    <scroll-view class="detail-content" scroll-y>
+      <view class="detail-image-section">
+        <image 
+          class="detail-image"
+          src="{{detailItem.image_url}}"
+          mode="aspectFill"
+        />
+        <view class="detail-actions">
+          <view 
+            class="detail-action-btn {{detailItem.is_favorite ? 'active' : ''}}"
+            bindtap="toggleFavorite"
+            data-item="{{detailItem}}"
+          >
+            <text>{{detailItem.is_favorite ? '💖 已收藏' : '🤍 收藏'}}</text>
+          </view>
+          <view 
+            class="detail-action-btn"
+            bindtap="recordWear"
+            data-item="{{detailItem}}"
+          >
+            <text>👔 记录穿戴</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="detail-info-section">
+        <view class="detail-main-info">
+          <text class="detail-name">{{detailItem.name}}</text>
+          <view class="detail-type-badge">{{detailItem.type}}</view>
+        </view>
+
+        <view class="detail-basic-info">
+          <view class="detail-info-row">
+            <text class="detail-label">颜色</text>
+            <text class="detail-value">{{detailItem.color}}</text>
+          </view>
+          <view class="detail-info-row" tt:if="{{detailItem.brand}}">
+            <text class="detail-label">品牌</text>
+            <text class="detail-value">{{detailItem.brand}}</text>
+          </view>
+          <view class="detail-info-row" tt:if="{{detailItem.size}}">
+            <text class="detail-label">尺码</text>
+            <text class="detail-value">{{detailItem.size}}</text>
+          </view>
+          <view class="detail-info-row" tt:if="{{detailItem.material}}">
+            <text class="detail-label">材质</text>
+            <text class="detail-value">{{detailItem.material}}</text>
+          </view>
+        </view>
+
+        <view class="detail-usage-stats">
+          <view class="stat-card">
+            <text class="stat-number">{{detailItem.wear_count}}</text>
+            <text class="stat-label">穿戴次数</text>
+          </view>
+          <view class="stat-card" tt:if="{{detailItem.purchase_price}}">
+            <text class="stat-number">¥{{detailItem.purchase_price}}</text>
+            <text class="stat-label">购买价格</text>
+          </view>
+          <view class="stat-card" tt:if="{{detailItem.last_worn_date}}">
+            <text class="stat-number">{{detailItem.last_worn_date}}</text>
+            <text class="stat-label">最后穿戴</text>
+          </view>
+        </view>
+
+        <view class="detail-additional-info" tt:if="{{detailItem.season || detailItem.occasion || detailItem.style_tags}}">
+          <view class="detail-info-row" tt:if="{{detailItem.season}}">
+            <text class="detail-label">适合季节</text>
+            <text class="detail-value">{{detailItem.season}}</text>
+          </view>
+          <view class="detail-info-row" tt:if="{{detailItem.occasion}}">
+            <text class="detail-label">适合场合</text>
+            <text class="detail-value">{{detailItem.occasion}}</text>
+          </view>
+          <view class="detail-tags" tt:if="{{detailItem.style_tags && detailItem.style_tags.length > 0}}">
+            <text class="detail-label">风格标签</text>
+            <view class="detail-tags-container">
+              <view 
+                class="detail-tag"
+                tt:for="{{detailItem.style_tags}}"
+                tt:key="*this"
+              >
+                <text>{{item}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="detail-description" tt:if="{{detailItem.description}}">
+          <text class="detail-label">描述</text>
+          <text class="detail-desc-text">{{detailItem.description}}</text>
+        </view>
+
+        <view class="detail-purchase-info" tt:if="{{detailItem.purchase_date || detailItem.purchase_place}}">
+          <text class="detail-section-title">购买信息</text>
+          <view class="detail-info-row" tt:if="{{detailItem.purchase_date}}">
+            <text class="detail-label">购买日期</text>
+            <text class="detail-value">{{detailItem.purchase_date}}</text>
+          </view>
+          <view class="detail-info-row" tt:if="{{detailItem.purchase_place}}">
+            <text class="detail-label">购买地点</text>
+            <text class="detail-value">{{detailItem.purchase_place}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="detail-footer">
+      <button class="detail-btn secondary" bindtap="hideItemDetail">
+        <text>关闭</text>
+      </button>
+      <button 
+        class="detail-btn primary" 
+        bindtap="showActionsFromDetail"
+        data-item="{{detailItem}}"
+      >
+        <text>更多操作</text>
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- AI悬浮球 -->
+<ai-floating-bot 
+  visible="{{true}}"
+  is-online="{{true}}"
+  message-count="{{0}}"
+  bind:botclick="onAIBotClick"
+  pageContext="wardrobe">
+</ai-floating-bot>

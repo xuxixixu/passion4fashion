@@ -1,0 +1,720 @@
+/* pages/login/login.ttss */
+
+.container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #ff6b9d 0%, #764ba2 25%, #f093fb 50%, #17c0eb 75%, #ff8a80 100%);
+    background-size: 400% 400%;
+    animation: fashionGradient 12s ease infinite;
+    padding: 60rpx 40rpx 40rpx;
+    position: relative;
+    overflow-x: hidden;
+  }
+  
+  @keyframes fashionGradient {
+    0% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 100% 100%; }
+    75% { background-position: 0% 100%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  /* ===== 装饰背景 ===== */
+  .decoration-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .floating-shape {
+    position: absolute;
+    font-size: 40rpx;
+    opacity: 0.6;
+    animation: fashionFloat 8s ease-in-out infinite;
+    filter: drop-shadow(0 0 20rpx rgba(255, 255, 255, 0.5));
+  }
+  
+  .shape-1 {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+  }
+  
+  .shape-2 {
+    top: 20%;
+    right: 15%;
+    animation-delay: 2s;
+  }
+  
+  .shape-3 {
+    bottom: 30%;
+    left: 20%;
+    animation-delay: 4s;
+  }
+  
+  .shape-4 {
+    bottom: 15%;
+    right: 10%;
+    animation-delay: 6s;
+  }
+  
+  @keyframes fashionFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+    25% { transform: translateY(-30rpx) rotate(90deg) scale(1.1); }
+    50% { transform: translateY(-20rpx) rotate(180deg) scale(0.9); }
+    75% { transform: translateY(-40rpx) rotate(270deg) scale(1.05); }
+  }
+  
+  /* ===== 品牌区域 ===== */
+  .brand-section {
+    text-align: center;
+    margin-bottom: 60rpx;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .brand-logo {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 30rpx;
+  }
+  
+  .logo-icon {
+    font-size: 120rpx;
+    animation: brandPulse 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 30rpx rgba(255, 255, 255, 0.8));
+  }
+  
+  .logo-sparkle {
+    position: absolute;
+    top: -10rpx;
+    right: -10rpx;
+    font-size: 40rpx;
+    animation: sparkle 2s ease-in-out infinite;
+  }
+  
+  @keyframes brandPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  
+  @keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.7; transform: scale(1.2) rotate(180deg); }
+  }
+  
+  .brand-text {
+    color: white;
+    text-align: center;
+  }
+  
+  .brand-title {
+    font-size: 52rpx;
+    font-weight: bold;
+    text-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.3);
+    display: block;
+    margin-bottom: 15rpx;
+    letter-spacing: 4rpx;
+  }
+  
+  .brand-subtitle {
+    font-size: 28rpx;
+    opacity: 0.9;
+    text-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.2);
+    display: block;
+    font-weight: 300;
+  }
+  
+  /* ===== 欢迎区域 ===== */
+  .welcome-section {
+    text-align: center;
+    margin-bottom: 80rpx;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .welcome-title {
+    font-size: 44rpx;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.3);
+    display: block;
+    margin-bottom: 15rpx;
+    animation: titleGlow 3s ease-in-out infinite alternate;
+  }
+  
+  .welcome-subtitle {
+    font-size: 26rpx;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+    display: block;
+  }
+  
+  @keyframes titleGlow {
+    from { text-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.3); }
+    to { text-shadow: 0 4rpx 25rpx rgba(255, 255, 255, 0.5); }
+  }
+  
+  /* ===== 登录表单 ===== */
+  .login-form {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 50rpx;
+  }
+  
+  .input-group {
+    margin-bottom: 40rpx;
+  }
+  
+  .input-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20rpx);
+    border-radius: 25rpx;
+    box-shadow: 0 15rpx 35rpx rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+  
+  .input-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 157, 0.1), transparent);
+    transition: left 0.6s ease;
+  }
+  
+  .input-container:focus-within::before {
+    left: 100%;
+  }
+  
+  .input-container:focus-within {
+    box-shadow: 0 15rpx 35rpx rgba(255, 107, 157, 0.2);
+    transform: translateY(-4rpx);
+  }
+  
+  .input-icon {
+    position: absolute;
+    left: 25rpx;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 36rpx;
+    z-index: 2;
+  }
+  
+  .form-input {
+    width: 100%;
+    height: 40px; /* 设置固定高度 */
+    line-height: 40px; /* 行高与高度一致 */
+    box-sizing: border-box;
+    padding: 0 45px; /* 左右内边距 */
+    display: flex;
+    align-items: center; /* 垂直居中 */
+    border: none;
+    background: transparent;
+    font-size: 28rpx;
+    color: #333;
+    z-index: 2;
+    position: relative;
+  }
+  
+  .input-placeholder {
+    color: #999;
+    font-size: 26rpx;
+  }
+  
+  .input-clear, .input-toggle {
+    position: absolute;
+    right: 25rpx;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40rpx;
+    height: 40rpx;
+    background: rgba(255, 107, 157, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24rpx;
+    color: #ff6b9d;
+    transition: all 0.3s ease;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(-50%) scale(0.8);
+  }
+  
+  .input-clear.show, .input-toggle {
+    opacity: 1;
+    transform: translateY(-50%) scale(1);
+  }
+  
+  .input-clear:active, .input-toggle:active {
+    background: rgba(255, 107, 157, 0.2);
+    transform: translateY(-50%) scale(0.9);
+  }
+  
+  .input-error {
+    margin-top: 15rpx;
+    padding-left: 30rpx;
+  }
+  
+  .input-error text {
+    font-size: 22rpx;
+    color: #ff4757;
+  }
+  
+  /* ===== 表单选项 ===== */
+  .form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 50rpx;
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+  }
+  
+  .checkbox {
+    width: 36rpx;
+    height: 36rpx;
+    border: 3rpx solid rgba(255, 255, 255, 0.6);
+    border-radius: 8rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15rpx;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10rpx);
+  }
+  
+  .checkbox.checked {
+    background: linear-gradient(135deg, #ff6b9d, #f093fb);
+    border-color: #ff6b9d;
+    color: white;
+    font-size: 20rpx;
+    font-weight: bold;
+  }
+  
+  .checkbox-label {
+    font-size: 24rpx;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  }
+  
+  .forgot-password text {
+    font-size: 24rpx;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+    text-decoration: underline;
+  }
+  
+  /* ===== 登录按钮 ===== */
+  .login-btn {
+    width: 100%;
+    height: 100rpx;
+    background: linear-gradient(135deg, #ff6b9d, #f093fb);
+    border: none;
+    border-radius: 50rpx;
+    box-shadow: 0 20rpx 40rpx rgba(255, 107, 157, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40rpx;
+  }
+  
+  .login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.8s ease;
+  }
+  
+  .login-btn:active::before {
+    left: 100%;
+  }
+  
+  .login-btn:active {
+    transform: translateY(4rpx);
+    box-shadow: 0 10rpx 25rpx rgba(255, 107, 157, 0.4);
+  }
+  
+  .login-btn.loading {
+    opacity: 0.8;
+    pointer-events: none;
+  }
+  
+  .btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .btn-text {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.3);
+    margin-right: 15rpx;
+  }
+  
+  .btn-emoji {
+    font-size: 28rpx;
+    animation: rocketFly 2s ease-in-out infinite;
+  }
+  
+  @keyframes rocketFly {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    50% { transform: translateX(10rpx) rotate(15deg); }
+  }
+  
+  .btn-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .loading-spinner {
+    width: 40rpx;
+    height: 40rpx;
+    border: 4rpx solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 20rpx;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  .loading-text {
+    font-size: 28rpx;
+    color: white;
+    font-weight: bold;
+  }
+  
+  /* ===== 分割线 ===== */
+  .divider-section {
+    display: flex;
+    align-items: center;
+    margin: 60rpx 0 50rpx;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .divider-line {
+    flex: 1;
+    height: 2rpx;
+    background: rgba(255, 255, 255, 0.3);
+  }
+  
+  .divider-text {
+    margin: 0 30rpx;
+    font-size: 24rpx;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  }
+  
+  /* ===== 快速登录 ===== */
+  .quick-login {
+    text-align: center;
+    margin-bottom: 60rpx;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .quick-title {
+    margin-bottom: 30rpx;
+  }
+  
+  .quick-title text {
+    font-size: 26rpx;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  }
+  
+  .quick-methods {
+    display: flex;
+    justify-content: center;
+    gap: 40rpx;
+  }
+  
+  .quick-method {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20rpx;
+    transition: all 0.3s ease;
+  }
+  
+  .quick-method:active {
+    transform: scale(0.95);
+  }
+  
+  .method-icon {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    margin-bottom: 15rpx;
+    backdrop-filter: blur(20rpx);
+    box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .wechat {
+    background: rgba(46, 213, 115, 0.2);
+    border: 2rpx solid rgba(46, 213, 115, 0.3);
+  }
+  
+  .phone {
+    background: rgba(255, 165, 2, 0.2);
+    border: 2rpx solid rgba(255, 165, 2, 0.3);
+  }
+  
+  .toutiao {
+    background: rgba(255, 71, 87, 0.2);
+    border: 2rpx solid rgba(255, 71, 87, 0.3);
+  }
+  
+  .method-icon:active {
+    transform: scale(1.1);
+    box-shadow: 0 15rpx 40rpx rgba(0, 0, 0, 0.2);
+  }
+  
+  .method-text {
+    font-size: 22rpx;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  }
+  
+  /* ===== 注册入口 ===== */
+  .register-section {
+    text-align: center;
+    margin-bottom: 40rpx;
+    position: relative;
+    z-index: 2;
+  }
+  
+  .register-text {
+    font-size: 26rpx;
+    color: rgba(255, 255, 255, 0.8);
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  }
+  
+  .register-link {
+    font-size: 26rpx;
+    color: white;
+    font-weight: bold;
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+    text-decoration: underline;
+    margin-left: 10rpx;
+  }
+  
+  /* ===== 用户协议 ===== */
+  .agreement-section {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 40rpx;
+  }
+  
+  .agreement-text {
+    font-size: 22rpx;
+    color: rgba(255, 255, 255, 0.7);
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+    line-height: 1.6;
+  }
+  
+  .agreement-link {
+    color: white;
+    text-decoration: underline;
+  }
+  
+  /* ===== 时尚装饰元素 ===== */
+  .fashion-elements {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+  
+  .fashion-item {
+    position: absolute;
+    font-size: 50rpx;
+    opacity: 0.3;
+    animation: fashionRotate 15s linear infinite;
+  }
+  
+  .item-1 {
+    top: 15%;
+    left: 5%;
+    animation-delay: 0s;
+  }
+  
+  .item-2 {
+    top: 40%;
+    right: 8%;
+    animation-delay: 3s;
+  }
+  
+  .item-3 {
+    bottom: 35%;
+    left: 8%;
+    animation-delay: 6s;
+  }
+  
+  .item-4 {
+    bottom: 10%;
+    right: 5%;
+    animation-delay: 9s;
+  }
+  
+  @keyframes fashionRotate {
+    from { transform: rotate(0deg) translateY(0px); }
+    to { transform: rotate(360deg) translateY(-20rpx); }
+  }
+  
+  /* ===== 弹窗样式 ===== */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .modal-content {
+    background: white;
+    border-radius: 30rpx;
+    padding: 0;
+    margin: 40rpx;
+    max-width: 600rpx;
+    width: 100%;
+    animation: modalSlideUp 0.4s ease;
+    overflow: hidden;
+  }
+  
+  @keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(100rpx) scale(0.9); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40rpx 40rpx 20rpx;
+    border-bottom: 1rpx solid #f0f0f0;
+  }
+  
+  .modal-title {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .modal-close {
+    width: 60rpx;
+    height: 60rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    color: #999;
+    border-radius: 50%;
+    background: #f8f8f8;
+  }
+  
+  .modal-body {
+    padding: 40rpx;
+  }
+  
+  .modal-text text {
+    font-size: 28rpx;
+    color: #666;
+    line-height: 1.6;
+    text-align: center;
+    display: block;
+    margin-bottom: 40rpx;
+  }
+  
+  .contact-methods {
+    display: flex;
+    gap: 30rpx;
+  }
+  
+  .contact-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30rpx 20rpx;
+    background: linear-gradient(135deg, #ff6b9d, #f093fb);
+    border-radius: 20rpx;
+    transition: all 0.3s ease;
+  }
+  
+  .contact-item:active {
+    transform: scale(0.95);
+  }
+  
+  .contact-icon {
+    font-size: 50rpx;
+    margin-bottom: 15rpx;
+  }
+  
+  .contact-text {
+    font-size: 24rpx;
+    color: white;
+    font-weight: bold;
+  }
+  
+  /* ===== 响应式设计 ===== */
+  @media (max-width: 320px) {
+    .brand-title {
+      font-size: 44rpx;
+    }
+    
+    .welcome-title {
+      font-size: 36rpx;
+    }
+    
+    .form-input {
+      padding: 25rpx 70rpx 25rpx 70rpx;
+    }
+    
+    .quick-methods {
+      gap: 30rpx;
+    }
+  }

@@ -1,0 +1,36 @@
+<view class="container">
+  <view class="header">
+    <text class="title">AI助手测试页面</text>
+    <text class="subtitle">点击右下角的悬浮球试试AI助手功能</text>
+  </view>
+  
+  <view class="content">
+    <view class="demo-card">
+      <text class="card-title">功能说明</text>
+      <view class="feature-list">
+        <text class="feature-item">• 可拖拽的悬浮球</text>
+        <text class="feature-item">• 点击弹出AI对话框</text>
+        <text class="feature-item">• 支持文本、图片、视频输入</text>
+        <text class="feature-item">• 智能位置自适应</text>
+      </view>
+    </view>
+    
+    <view class="demo-card">
+      <text class="card-title">使用指南</text>
+      <view class="guide-list">
+        <text class="guide-item">1. 长按悬浮球可以拖拽移动</text>
+        <text class="guide-item">2. 单击悬浮球打开AI对话框</text>
+        <text class="guide-item">3. 在对话框中输入消息与AI交流</text>
+        <text class="guide-item">4. 点击对话框外区域关闭</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- AI悬浮球 -->
+  <ai-floating-bot
+    visible="{{true}}"
+    initial-position="{{initialPosition}}"
+    message-count="{{0}}"
+    pageContext="home"
+  />
+</view>

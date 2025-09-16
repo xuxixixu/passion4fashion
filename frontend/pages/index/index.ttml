@@ -1,0 +1,251 @@
+<!--pages/index/index.ttml-->
+<scroll-view scroll-y="true" style="height: 100vh;">
+  <view class="container">
+  <!-- 顶部装饰区域 -->
+  <view class="header-decoration">
+    <view class="floating-bubble bubble-1"></view>
+    <view class="floating-bubble bubble-2"></view>
+    <view class="floating-bubble bubble-3"></view>
+  </view>
+
+   <!-- 主标题区域 -->
+   <view class="hero-section">
+    <view class="ai-logo">
+      <image src="/imgs/logo.png" class="ai-icon"></image>
+      <view class="ai-text">
+        <text class="main-title">让穿搭更加简单</text>
+        <text class="sub-title">PASSION FOR FASHION</text>
+      </view>
+    </view>
+    
+    <!-- AI光环效果 -->
+    <view class="ai-halo"></view>
+  </view>
+
+  <!-- 快速功能区域 -->
+  <view class="quick-actions">
+    <view class="action-title">
+      <text>✨ 开启你的时尚之旅</text>
+    </view>
+    
+    <view class="action-grid">
+      <!-- AI分析功能 -->
+      <view class="action-card main-card" bindtap="goToStyleAnalysis">
+        <view class="card-icon">
+          <text>🎯</text>
+        </view>
+        <view class="card-content">
+          <text class="card-title">AI风格分析</text>
+          <text class="card-desc">上传照片，AI为你量身定制</text>
+        </view>
+        <view class="card-glow"></view>
+      </view>
+
+      <!-- 衣橱管理 -->
+      <view class="action-card" bindtap="goToWardrobe">
+        <view class="card-icon">
+          <text>👗</text>
+        </view>
+        <view class="card-content">
+          <text class="card-title">智能衣橱</text>
+          <text class="card-desc">管理你的时尚单品</text>
+        </view>
+      </view>
+
+      <!-- 个人中心 -->
+      <view class="action-card" bindtap="goToProfile">
+        <view class="card-icon">
+          <text>💎</text>
+        </view>
+        <view class="card-content">
+          <text class="card-title">个人中心</text>
+          <text class="card-desc">完善你的专属档案</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 虚拟试穿功能区域 -->
+  <view class="virtual-tryon-section">
+    <view class="section-header">
+      <text class="section-title">🎭 AI虚拟试穿</text>
+      <text class="section-subtitle">看看新衣服穿在你身上的效果</text>
+    </view>
+    
+    <!-- 上传区域 -->
+    <view class="upload-container">
+      <!-- 左边：用户照片 -->
+      <view class="upload-left">
+        <view class="upload-area user-area" bindtap="selectUserImage">
+          <block wx:if="{{userImage}}">
+            <image class="preview-image" src="{{userImage.path}}" mode="aspectFill"></image>
+            <view class="image-label">您的照片</view>
+          </block>
+          <block wx:else>
+            <view class="upload-placeholder">
+              <text class="placeholder-icon">📷</text>
+              <text class="placeholder-text">上传您的照片</text>
+            </view>
+          </block>
+        </view>
+      </view>
+
+      <!-- 右边：衣服照片 -->
+      <view class="upload-right">
+        <view class="clothes-container">
+          <view class="clothes-header">
+            <text class="clothes-title">要试穿的衣服</text>
+            <text class="clothes-count">({{clothesImages.length}}/3)</text>
+          </view>
+          
+          <scroll-view class="clothes-list" scroll-y>
+            <!-- 已选衣服 -->
+            <block wx:for="{{clothesImages}}" wx:key="index">
+              <view class="clothes-item">
+                <image class="clothes-image" src="{{item.path}}" mode="aspectFill"></image>
+                <view class="remove-btn" bindtap="removeClothes" data-index="{{index}}">×</view>
+              </view>
+            </block>
+            
+            <!-- 添加按钮 -->
+            <view class="add-clothes {{clothesImages.length >= 3 ? 'disabled' : ''}}" bindtap="selectClothesImage">
+              <text class="add-icon">+</text>
+              <text class="add-text">添加衣服</text>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 一键试穿按钮 -->
+    <view class="tryon-button-container">
+      <button class="tryon-btn {{!userImage || clothesImages.length === 0 || isProcessing ? 'disabled' : ''}}" 
+              bindtap="startVirtualTryon" 
+              disabled="{{!userImage || clothesImages.length === 0 || isProcessing}}">
+        <text class="btn-text">{{isProcessing ? '正在生成中...' : '一键试穿'}}</text>
+      </button>
+    </view>
+
+    <!-- 结果显示区域 -->
+    <view class="result-container" wx:if="{{isProcessing || tryonResult}}">
+      <view class="result-header">
+        <text class="result-title">试穿效果</text>
+      </view>
+      
+      <view class="result-content">
+        <block wx:if="{{isProcessing}}">
+          <view class="loading-container">
+            <view class="loading-animation">
+              <view class="loading-dot"></view>
+              <view class="loading-dot"></view>
+              <view class="loading-dot"></view>
+            </view>
+            <text class="loading-text">AI正在为您生成试穿效果...</text>
+          </view>
+        </block>
+        
+        <block wx:if="{{tryonResult}}">
+          <!-- 注意：这里改成直接显示base64数据 -->
+          <image class="result-image" src="{{tryonResult.imageData}}" mode="aspectFit"></image>
+          <view class="result-actions">
+            <button class="action-btn save-btn" bindtap="saveResult">保存图片</button>
+            <button class="action-btn retry-btn" bindtap="resetTryon">重新试穿</button>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 特色功能展示 -->
+  <view class="features-section">
+    <view class="feature-title">
+      <text>🔥 AI黑科技</text>
+    </view>
+    
+    <scroll-view class="features-scroll" scroll-x>
+      <view class="feature-item">
+        <view class="feature-bg feature-bg-1"></view>
+        <text class="feature-title-text">智能搭配</text>
+        <text class="feature-desc">AI分析你的风格偏好</text>
+      </view>
+      
+      <view class="feature-item">
+        <view class="feature-bg feature-bg-2"></view>
+        <text class="feature-title-text">个性头像</text>
+        <text class="feature-desc">生成专属卡通头像</text>
+      </view>
+      
+      <view class="feature-item">
+        <view class="feature-bg feature-bg-3"></view>
+        <text class="feature-title-text">体型分析</text>
+        <text class="feature-desc">精准识别最适合你的穿搭</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 流行趋势 -->
+  <view class="trends-section">
+    <view class="trends-header">
+      <text class="trends-title">📈 当下流行</text>
+      <text class="trends-more">查看更多 ></text>
+    </view>
+    
+    <view class="trends-grid">
+      <view class="trend-tag">#韩系简约</view>
+      <view class="trend-tag">#复古回潮</view>
+      <view class="trend-tag">#甜酷女孩</view>
+      <view class="trend-tag">#职场精英</view>
+      <view class="trend-tag">#街头潮流</view>
+      <view class="trend-tag">#温柔淑女</view>
+    </view>
+  </view>
+
+  <!-- 数据展示 -->
+  <view class="stats-section">
+    <view class="stat-item">
+      <text class="stat-number">{{userStats.totalAnalysis}}</text>
+      <text class="stat-label">AI分析次数</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{userStats.totalUsers}}</text>
+      <text class="stat-label">用户信赖</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-number">{{userStats.satisfactionRate}}%</text>
+      <text class="stat-label">满意度</text>
+    </view>
+  </view>
+</scroll-view>
+
+<!-- 底部导航栏 -->
+<view class="bottom-nav">
+  <view class="nav-item nav-active" bindtap="switchTab" data-tab="index">
+    <view class="nav-icon">🏠</view>
+    <text class="nav-text">首页</text>
+  </view>
+  
+  <view class="nav-item" bindtap="switchTab" data-tab="analysis">
+    <view class="nav-icon">🎯</view>
+    <text class="nav-text">AI分析</text>
+  </view>
+  
+  <view class="nav-item" bindtap="switchTab" data-tab="wardrobe">
+    <view class="nav-icon">👗</view>
+    <text class="nav-text">衣橱</text>
+  </view>
+  
+  <view class="nav-item" bindtap="switchTab" data-tab="profile">
+    <view class="nav-icon">👤</view>
+    <text class="nav-text">我的</text>
+  </view>
+</view>
+
+<!-- AI悬浮球 -->
+<ai-floating-bot 
+  visible="{{true}}"
+  is-online="{{true}}"
+  message-count="{{0}}"
+  bind:botclick="onAIBotClick"
+  pageContext="home">
+</ai-floating-bot>
+</scroll-view>

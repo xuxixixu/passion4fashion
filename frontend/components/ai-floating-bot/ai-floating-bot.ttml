@@ -1,0 +1,25 @@
+<!--components/ai-floating-bot/ai-floating-bot.ttml-->
+
+  <!-- 聊天按钮 -->
+<view class="ai-floating-bot {{isDragging ? 'dragging' : ''}}"
+      catchtouchstart="onTouchStart"
+      catchtouchmove="onTouchMove"
+      catchtouchend="onTouchEnd"
+      bindtap="onBotClick"
+      style="left: {{position.x}}px; top: {{position.y}}px;">
+
+      <image src="/imgs/%E6%A3%92%E6%A3%92%E7%B3%96.png" class="chat-icon"></image>
+    <!-- 在线状态指示器 -->
+    <view class="status-indicator {{isOnline ? 'online' : 'offline'}}"></view>
+    
+    <!-- 消息提示红点 -->
+    <view class="message-badge {{hasNewMessage ? 'show' : ''}}">{{messageCount}}</view>
+</view>
+
+<!-- AI对话框 -->
+<ai-chat-dialog 
+  visible="{{showDialog}}"
+  position="{{dialogPosition}}"
+  pageContext="{{pageContext}}"
+  bind:close="onDialogClose"
+></ai-chat-dialog>

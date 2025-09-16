@@ -1,0 +1,93 @@
+.container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 40rpx 30rpx;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 60rpx;
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #ffffff;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.subtitle {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.8);
+  display: block;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 40rpx;
+}
+
+.demo-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  padding: 40rpx 30rpx;
+  box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10rpx);
+}
+
+.card-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+  display: block;
+  margin-bottom: 30rpx;
+  border-left: 6rpx solid #667eea;
+  padding-left: 20rpx;
+}
+
+.feature-list,
+.guide-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.feature-item,
+.guide-item {
+  font-size: 28rpx;
+  color: #666666;
+  line-height: 1.6;
+  display: block;
+}
+
+.feature-item {
+  padding-left: 20rpx;
+}
+
+.guide-item {
+  padding: 15rpx 20rpx;
+  background: rgba(102, 126, 234, 0.1);
+  border-radius: 10rpx;
+  border-left: 4rpx solid #667eea;
+}
+
+/* 响应式设计 */
+@media screen and (max-width: 375px) {
+  .container {
+    padding: 30rpx 20rpx;
+  }
+  
+  .title {
+    font-size: 42rpx;
+  }
+  
+  .subtitle {
+    font-size: 26rpx;
+  }
+  
+  .demo-card {
+    padding: 30rpx 25rpx;
+  }
+}

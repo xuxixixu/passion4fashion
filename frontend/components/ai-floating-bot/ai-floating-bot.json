@@ -1,0 +1,6 @@
+{
+  "component": true,
+  "usingComponents": {
+    "ai-chat-dialog": "../ai-chat-dialog/ai-chat-dialog"
+  }
+}

@@ -1,0 +1,290 @@
+<!--pages/register/register.ttml-->
+<scroll-view class="container" scroll-y>
+    <!-- 装饰背景 -->
+    <view class="decoration-bg">
+      <view class="floating-star star-1">⭐</view>
+      <view class="floating-star star-2">🌟</view>
+      <view class="floating-star star-3">✨</view>
+      <view class="floating-star star-4">💫</view>
+      <view class="floating-star star-5">🌈</view>
+    </view>
+  
+    <!-- 顶部欢迎区域 -->
+    <view class="welcome-section">
+      <view class="welcome-icon">
+        <view class="icon-main">🎉</view>
+        <view class="icon-sparkle">✨</view>
+      </view>
+      <view class="welcome-text">
+        <text class="welcome-title">加入时尚大家庭</text>
+        <text class="welcome-subtitle">开启你的专属时尚之旅</text>
+      </view>
+    </view>
+  
+    <!-- 进度指示器 -->
+    <view class="progress-section">
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{progressWidth}}%"></view>
+      </view>
+      <text class="progress-text">第 {{currentStep}} 步，共 3 步</text>
+    </view>
+  
+    <!-- 注册表单 -->
+    <scroll-view class="form-container" scroll-y>
+      
+      <!-- 步骤1: 基本信息 -->
+      <view class="form-step" wx:if="{{currentStep === 1}}">
+        <view class="step-header">
+          <text class="step-title">📱 基本信息</text>
+          <text class="step-desc">请填写你的手机号码</text>
+        </view>
+  
+        <!-- 手机号输入 -->
+        <view class="input-group">
+          <view class="input-container">
+            <view class="input-icon">📱</view>
+            <input 
+              class="form-input"
+              type="number"
+              placeholder="请输入手机号"
+              value="{{phone}}"
+              bindinput="onPhoneInput"
+              maxlength="11"
+              placeholder-class="input-placeholder"
+            />
+            <view class="input-status {{phoneValid ? 'valid' : ''}}">
+              <text>{{phoneValid ? '✓' : ''}}</text>
+            </view>
+          </view>
+          <view class="input-error" wx:if="{{phoneError}}">
+            <text>{{phoneError}}</text>
+          </view>
+        </view>
+  
+        <!-- 验证码输入 -->
+        <view class="input-group">
+          <view class="input-container">
+            <view class="input-icon">🔢</view>
+            <input 
+              class="form-input code-input"
+              type="number"
+              placeholder="请输入验证码"
+              value="{{verifyCode}}"
+              bindinput="onCodeInput"
+              maxlength="6"
+              placeholder-class="input-placeholder"
+            />
+            <button 
+              class="code-btn {{codeLoading || !phoneValid ? 'disabled' : ''}}"
+              bindtap="sendVerifyCode"
+              disabled="{{codeLoading || !phoneValid || countdown > 0}}"
+            >
+              <text wx:if="{{countdown > 0}}">{{countdown}}s</text>
+              <text wx:elif="{{codeLoading}}">发送中</text>
+              <text wx:else>发送验证码</text>
+            </button>
+          </view>
+          <view class="input-error" wx:if="{{codeError}}">
+            <text>{{codeError}}</text>
+          </view>
+        </view>
+  
+        <view class="step-actions">
+          <button class="btn-next" bindtap="nextStep" disabled="{{!step1Valid}}">
+            下一步：设置密码
+          </button>
+        </view>
+      </view>
+  
+      <!-- 步骤2: 密码设置 -->
+      <view class="form-step" wx:if="{{currentStep === 2}}">
+        <view class="step-header">
+          <text class="step-title">🔐 密码设置</text>
+          <text class="step-desc">请设置一个安全的密码</text>
+        </view>
+  
+        <!-- 密码输入 -->
+        <view class="input-group">
+          <view class="input-container">
+            <view class="input-icon">🔒</view>
+            <input 
+              class="form-input"
+              type="{{showPassword ? 'text' : 'password'}}"
+              placeholder="请设置密码（6-50位）"
+              value="{{password}}"
+              bindinput="onPasswordInput"
+              maxlength="50"
+              placeholder-class="input-placeholder"
+            />
+            <view class="input-toggle" bindtap="togglePassword">
+              <text>{{showPassword ? '🙈' : '👁️'}}</text>
+            </view>
+          </view>
+          <view class="password-strength">
+            <view class="strength-item {{passwordStrength >= 1 ? 'active' : ''}}"></view>
+            <view class="strength-item {{passwordStrength >= 2 ? 'active' : ''}}"></view>
+            <view class="strength-item {{passwordStrength >= 3 ? 'active' : ''}}"></view>
+            <text class="strength-text">{{passwordStrengthText}}</text>
+          </view>
+          <view class="input-error" wx:if="{{passwordError}}">
+            <text>{{passwordError}}</text>
+          </view>
+        </view>
+  
+        <!-- 确认密码 -->
+        <view class="input-group">
+          <view class="input-container">
+            <view class="input-icon">🔐</view>
+            <input 
+              class="form-input"
+              type="{{showConfirmPassword ? 'text' : 'password'}}"
+              placeholder="请再次输入密码"
+              value="{{confirmPassword}}"
+              bindinput="onConfirmPasswordInput"
+              maxlength="50"
+              placeholder-class="input-placeholder"
+            />
+            <view class="input-toggle" bindtap="toggleConfirmPassword">
+              <text>{{showConfirmPassword ? '🙈' : '👁️'}}</text>
+            </view>
+          </view>
+          <view class="input-error" wx:if="{{confirmPasswordError}}">
+            <text>{{confirmPasswordError}}</text>
+          </view>
+        </view>
+  
+        <view class="step-actions">
+          <button class="btn-back" bindtap="prevStep">上一步</button>
+          <button class="btn-next" bindtap="nextStep" disabled="{{!step2Valid}}">
+            下一步：完善信息
+          </button>
+        </view>
+      </view>
+  
+      <!-- 步骤3: 完善信息 -->
+      <view class="form-step" wx:if="{{currentStep === 3}}">
+        <view class="step-header">
+          <text class="step-title">💎 完善信息</text>
+          <text class="step-desc">让我们更好地了解你</text>
+        </view>
+  
+        <!-- 昵称输入 -->
+        <view class="input-group">
+          <view class="input-container">
+            <view class="input-icon">👤</view>
+            <input 
+              class="form-input"
+              type="text"
+              placeholder="请输入昵称（可选）"
+              value="{{nickname}}"
+              bindinput="onNicknameInput"
+              maxlength="20"
+              placeholder-class="input-placeholder"
+            />
+            <view class="input-count">
+              <text>{{nickname.length}}/20</text>
+            </view>
+          </view>
+        </view>
+  
+        <!-- 性别选择 -->
+        <view class="gender-selection">
+          <view class="gender-title">选择性别（可选）</view>
+          <view class="gender-options">
+            <view 
+              class="gender-option {{gender === 'female' ? 'selected' : ''}}"
+              bindtap="selectGender"
+              data-gender="female"
+            >
+              <text class="gender-icon">👩</text>
+              <text class="gender-text">女</text>
+            </view>
+            <view 
+              class="gender-option {{gender === 'male' ? 'selected' : ''}}"
+              bindtap="selectGender"
+              data-gender="male"
+            >
+              <text class="gender-icon">👨</text>
+              <text class="gender-text">男</text>
+            </view>
+            <view 
+              class="gender-option {{gender === 'other' ? 'selected' : ''}}"
+              bindtap="selectGender"
+              data-gender="other"
+            >
+              <text class="gender-icon">🌈</text>
+              <text class="gender-text">其他</text>
+            </view>
+          </view>
+        </view>
+  
+        <!-- 用户协议 -->
+        <view class="agreement-section">
+          <view class="agreement-checkbox" bindtap="toggleAgreement">
+            <view class="checkbox {{agreeToTerms ? 'checked' : ''}}">
+              <text wx:if="{{agreeToTerms}}">✓</text>
+            </view>
+            <text class="agreement-text">
+              我已阅读并同意
+              <text class="agreement-link" bindtap="showUserAgreement">《用户协议》</text>
+              和
+              <text class="agreement-link" bindtap="showPrivacyPolicy">《隐私政策》</text>
+            </text>
+          </view>
+        </view>
+  
+        <view class="step-actions">
+          <button class="btn-back" bindtap="prevStep">上一步</button>
+          <button 
+            class="btn-register {{isLoading ? 'loading' : ''}}"
+            bindtap="handleRegister"
+            disabled="{{!step3Valid || isLoading}}"
+          >
+            <view wx:if="{{!isLoading}}" class="btn-content">
+              <text class="btn-text">完成注册</text>
+              <text class="btn-emoji">🎊</text>
+            </view>
+            <view wx:else class="btn-loading">
+              <view class="loading-spinner"></view>
+              <text class="loading-text">注册中...</text>
+            </view>
+          </button>
+        </view>
+      </view>
+  
+    </scroll-view>
+  
+    <!-- 登录入口 -->
+    <view class="login-section">
+      <text class="login-text">已有账号？</text>
+      <text class="login-link" bindtap="goToLogin">立即登录</text>
+    </view>
+  
+    <!-- 时尚装饰元素 -->
+    <view class="fashion-decorations">
+      <view class="fashion-circle circle-1"></view>
+      <view class="fashion-circle circle-2"></view>
+      <view class="fashion-triangle triangle-1"></view>
+      <view class="fashion-triangle triangle-2"></view>
+    </view>
+</scroll-view>
+  
+<!-- 成功注册弹窗 -->
+<view class="success-modal" wx:if="{{showSuccessModal}}" bindtap="closeSuccessModal">
+  <view class="success-content" catchtap="preventClose">
+    <view class="success-icon">🎉</view>
+    <text class="success-title">注册成功！</text>
+    <text class="success-subtitle">欢迎加入AI穿搭助手</text>
+    <button class="success-btn" bindtap="goToLoginAfterRegister">
+      开始使用
+    </button>
+  </view>
+</view>
+  
+<!-- AI悬浮球 -->
+<ai-floating-bot 
+  visible="{{true}}"
+  is-online="{{true}}"
+  message-count="{{0}}"
+  bindtap:botclick="onAIBotClick">
+</ai-floating-bot>

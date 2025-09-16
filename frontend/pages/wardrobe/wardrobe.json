@@ -1,0 +1,13 @@
+{
+  "navigationBarTitleText": "我的衣橱",
+  "navigationBarBackgroundColor": "#ff6b9d",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f093fb",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50,
+  "backgroundColorTop": "#ff6b9d",
+  "backgroundColorBottom": "#ffeaa7",
+  "usingComponents": {
+    "ai-floating-bot": "/components/ai-floating-bot/ai-floating-bot"
+  }
+}

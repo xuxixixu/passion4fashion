@@ -1,0 +1,10 @@
+{
+    "navigationBarTitleText": "注册",
+    "navigationBarBackgroundColor": "#17c0eb",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#e8f5ff",
+    "enablePullDownRefresh": false,
+    "onReachBottomDistance": 50,
+    "backgroundColorTop": "#17c0eb",
+    "backgroundColorBottom": "#f093fb"
+  }

@@ -1,0 +1,430 @@
+<!--pages/analysis/analysis.ttml-->
+<scroll-view scroll-y="true" style="height: 100vh;">
+  <view class="container">
+  <!-- 顶部AI大脑动画 -->
+  <view class="ai-brain-section">
+    <view class="brain-container">
+      <view class="brain-icon">🧠</view>
+      <view class="neural-network">
+        <view class="neural-dot dot-1"></view>
+        <view class="neural-dot dot-2"></view>
+        <view class="neural-dot dot-3"></view>
+        <view class="neural-dot dot-4"></view>
+        <view class="neural-line line-1"></view>
+        <view class="neural-line line-2"></view>
+        <view class="neural-line line-3"></view>
+      </view>
+    </view>
+    <view class="brain-text">
+      <text class="brain-title">AI智能分析</text>
+      <text class="brain-subtitle">{{analysisStatus || '让AI读懂你的时尚密码'}}</text>
+      <!-- 新增：异步处理状态指示 -->
+      <view class="async-status" wx:if="{{isAnalyzing}}">
+        <view class="async-progress">
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{pollAttempts * 100 / maxPollAttempts}}%"></view>
+          </view>
+          <text class="progress-text">处理中... {{pollAttempts}}/{{maxPollAttempts}}</text>
+        </view>
+        <!-- 新增：任务ID显示（调试用） -->
+        <view class="task-info" wx:if="{{currentTaskId}}">
+          <text class="task-id">任务ID: {{currentTaskId}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 上传步骤指引 -->
+  <view class="steps-guide">
+    <view class="step-item {{currentStep >= 1 ? 'step-active' : ''}}" data-step="1" bindtap="goToStep">
+      <view class="step-circle">
+        <text class="step-number">1</text>
+      </view>
+      <text class="step-text">上传喜欢的风格</text>
+    </view>
+    
+    <view class="step-line"></view>
+    
+    <view class="step-item {{currentStep >= 2 ? 'step-active' : ''}}" data-step="2" bindtap="goToStep">
+      <view class="step-circle">
+        <text class="step-number">2</text>
+      </view>
+      <text class="step-text">上传你的照片</text>
+    </view>
+    
+    <view class="step-line"></view>
+    
+    <view class="step-item {{currentStep >= 3 ? 'step-active' : ''}}" data-step="3" bindtap="goToStep">
+      <view class="step-circle">
+        <text class="step-number">3</text>
+      </view>
+      <text class="step-text">告诉AI你的需求</text>
+    </view>
+  </view>
+
+  <!-- 主要内容区域 -->
+  <scroll-view class="main-content" scroll-y enhanced>
+    
+    <!-- 步骤1: 风格图片上传 -->
+    <view class="upload-section" wx:if="{{currentStep === 1}}">
+      <view class="section-header">
+        <view class="section-icon">✨</view>
+        <view class="section-title">
+          <text class="title-main">分享你喜欢的风格</text>
+          <text class="title-sub">上传1-3张你心仪的穿搭图片</text>
+        </view>
+      </view>
+
+      <view class="upload-grid">
+        <view class="upload-item" wx:for="{{styleImages}}" wx:key="index" bindtap="previewImage" data-type="style" data-index="{{index}}">
+          <image class="upload-image" src="{{item.url}}" mode="aspectFill"></image>
+          <view class="upload-delete" bindtap="deleteImage" data-type="style" data-index="{{index}}">
+            <text>×</text>
+          </view>
+        </view>
+        
+        <view class="upload-placeholder" wx:if="{{styleImages.length < 3}}" bindtap="chooseStyleImages">
+          <view class="upload-icon">📸</view>
+          <text class="upload-text">添加风格图片</text>
+        </view>
+      </view>
+
+      <view class="upload-tips">
+        <text>💡 可以是网红博主穿搭、杂志图片或任何你喜欢的风格</text>
+      </view>
+
+      <view class="step-actions">
+        <button class="btn-next" bindtap="nextStep" disabled="{{styleImages.length === 0}}">
+          下一步：上传你的照片
+        </button>
+      </view>
+    </view>
+
+    <!-- 步骤2: 用户照片上传 -->
+    <view class="upload-section" wx:if="{{currentStep === 2}}">
+      <view class="section-header">
+        <view class="section-icon">📷</view>
+        <view class="section-title">
+          <text class="title-main">上传你的照片</text>
+          <text class="title-sub">让AI分析你的体型和气质特点</text>
+        </view>
+      </view>
+
+      <view class="upload-grid">
+        <view class="upload-item" wx:for="{{userImages}}" wx:key="index" bindtap="previewImage" data-type="user" data-index="{{index}}">
+          <image class="upload-image" src="{{item.url}}" mode="aspectFill"></image>
+          <view class="upload-delete" bindtap="deleteImage" data-type="user" data-index="{{index}}">
+            <text>×</text>
+          </view>
+        </view>
+        
+        <view class="upload-placeholder" wx:if="{{userImages.length < 2}}" bindtap="chooseUserImages">
+          <view class="upload-icon">🤳</view>
+          <text class="upload-text">添加你的照片</text>
+        </view>
+      </view>
+
+      <view class="upload-tips">
+        <text>💡 建议上传全身照，光线充足的照片分析效果更好</text>
+      </view>
+
+      <view class="privacy-notice">
+        <view class="privacy-icon">🔒</view>
+        <text class="privacy-text">你的照片仅用于AI分析，我们承诺保护隐私安全</text>
+      </view>
+
+      <view class="step-actions">
+        <button class="btn-back" bindtap="prevStep">上一步</button>
+        <button class="btn-next" bindtap="nextStep">下一步：个性化设置</button>
+      </view>
+    </view>
+
+    <!-- 步骤3: 需求输入 -->
+    <view class="input-section" wx:if="{{currentStep === 3}}">
+      <view class="section-header">
+        <view class="section-icon">💭</view>
+        <view class="section-title">
+          <text class="title-main">告诉AI你的需求</text>
+          <text class="title-sub">描述你的穿搭场景和风格偏好</text>
+        </view>
+      </view>
+
+      <!-- 用户名输入 -->
+      <view class="input-group">
+        <view class="input-label">
+          <text>你的昵称</text>
+          <text class="label-optional">（可选）</text>
+        </view>
+        <input class="custom-input" placeholder="输入你的昵称，AI会更贴心" value="{{userName}}" bindinput="onUserNameInput" maxlength="20"/>
+      </view>
+
+      <!-- 需求描述 -->
+      <view class="input-group">
+        <view class="input-label">
+          <text>穿搭需求</text>
+          <text class="label-optional">（可选）</text>
+        </view>
+        <textarea 
+          class="custom-textarea" 
+          placeholder="比如：我想要简约商务的搭配风格，适合春季穿着，适合约会场合..."
+          value="{{textRequirements}}"
+          bindinput="onTextInput"
+          maxlength="200"
+          show-confirm-bar="{{false}}"
+          auto-height
+        ></textarea>
+        <view class="char-count">{{textRequirements.length}}/200</view>
+      </view>
+
+      <!-- 快速标签 -->
+      <view class="quick-tags">
+        <view class="tags-title">🏷️ 快速选择场合：</view>
+        <view class="tags-grid">
+          <view 
+            class="quick-tag {{item.selected ? 'tag-selected' : ''}}" 
+            wx:for="{{quickTags}}" 
+            wx:key="id"
+            bindtap="toggleTag"
+            data-id="{{item.id}}"
+          >
+            {{item.text}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 高级设置 -->
+      <view class="advanced-settings">
+        <view class="setting-item">
+          <view class="setting-label">
+            <text>生成专属卡通头像</text>
+            <text class="setting-desc">AI将为你创建个性化头像（需要额外1-2分钟）</text>
+          </view>
+          <switch class="custom-switch" checked="{{generateAvatar}}" bindchange="onAvatarToggle" color="#ff6b9d"/>
+        </view>
+        
+        <!-- 新增：头像生成说明 -->
+        <view class="avatar-notice" wx:if="{{generateAvatar}}">
+          <view class="notice-icon">ℹ️</view>
+          <text class="notice-text">启用头像生成后，整个分析过程可能需要2-5分钟，请耐心等待</text>
+        </view>
+      </view>
+
+      <view class="step-actions">
+        <button class="btn-back" bindtap="prevStep">上一步</button>
+        <button class="btn-analyze" bindtap="startAnalysis" loading="{{isAnalyzing}}" disabled="{{isAnalyzing}}">
+          <text wx:if="{{!isAnalyzing}}">🚀 开始AI分析</text>
+          <text wx:else>🤖 AI正在思考中...</text>
+        </button>
+        <!-- 新增：取消分析按钮 -->
+        <button class="btn-cancel" wx:if="{{isAnalyzing && currentTaskId}}" bindtap="cancelAnalysis">
+          取消分析
+        </button>
+      </view>
+    </view>
+
+    <!-- 新增：异步处理状态展示区域 -->
+    <view class="processing-section" wx:if="{{isAnalyzing && currentTaskId}}">
+      <view class="processing-header">
+        <view class="processing-icon">⚡</view>
+        <view class="processing-title">
+          <text class="title-main">AI正在为你量身定制</text>
+          <text class="title-sub">请稍等，这个过程可能需要1-3分钟</text>
+        </view>
+      </view>
+      
+      <view class="processing-progress">
+        <view class="progress-steps">
+          <view class="progress-step active">
+            <view class="step-dot"></view>
+            <text class="step-label">任务已启动</text>
+          </view>
+          <view class="progress-step {{pollAttempts > 5 ? 'active' : ''}}">
+            <view class="step-dot"></view>
+            <text class="step-label">正在分析</text>
+          </view>
+          <view class="progress-step {{pollAttempts > 20 ? 'active' : ''}}">
+            <view class="step-dot"></view>
+            <text class="step-label">生成建议</text>
+          </view>
+          <view class="progress-step">
+            <view class="step-dot"></view>
+            <text class="step-label">完成</text>
+          </view>
+        </view>
+        
+        <view class="progress-detail">
+          <text class="detail-text">{{analysisStatus}}</text>
+          <view class="progress-bar-container">
+            <view class="progress-bar-bg">
+              <view class="progress-bar-fill" style="width: {{Math.min(pollAttempts * 100 / maxPollAttempts, 90)}}%"></view>
+            </view>
+            <text class="progress-percentage">{{Math.min(Math.floor(pollAttempts * 100 / maxPollAttempts), 90)}}%</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 新增：处理提示 -->
+      <view class="processing-tips">
+        <view class="tip-item">
+          <text class="tip-icon">💡</text>
+          <text class="tip-text">AI正在深度分析你的风格偏好和体型特征</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-icon">🎨</text>
+          <text class="tip-text">同时为你生成个性化的时尚建议</text>
+        </view>
+        <view class="tip-item" wx:if="{{generateAvatar && analysisStatus.indexOf('头像') > -1}}">
+          <text class="tip-icon">🖼️</text>
+          <text class="tip-text">正在制作你的专属卡通头像，这是最耗时的步骤</text>
+        </view>
+        <view class="tip-item" wx:if="{{generateAvatar && analysisStatus.indexOf('头像') === -1}}">
+          <text class="tip-icon">🖼️</text>
+          <text class="tip-text">稍后还会为你生成专属卡通头像</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分析结果展示 -->
+    <view class="result-section" wx:if="{{analysisResult}}">
+      <view class="result-header">
+        <view class="result-icon">🎉</view>
+        <view class="result-title">
+          <text class="title-main">AI分析完成！</text>
+          <text class="title-sub">为你量身定制的时尚建议</text>
+        </view>
+      </view>
+
+      <!-- 生成的头像 -->
+      <view class="avatar-result" wx:if="{{avatarUrl && (avatarStatus === 'completed' || avatarStatus === 'fallback')}}">
+        <view class="avatar-container">
+          <image class="generated-avatar" src="{{avatarUrl}}" mode="aspectFit"></image>
+          <view class="avatar-label">
+            <text wx:if="{{avatarStatus === 'completed'}}">你的专属头像</text>
+            <text wx:if="{{avatarStatus === 'fallback'}}">备用头像</text>
+          </view>
+        </view>
+        <button class="btn-save-avatar" bindtap="saveAvatar">保存头像</button>
+        
+        <!-- 如果是备用头像，显示说明 -->
+        <view class="avatar-warning" wx:if="{{avatarStatus === 'fallback'}}">
+          <text class="warning-icon">⚠️</text>
+          <text class="warning-text">头像生成遇到问题，显示的是备用头像</text>
+        </view>
+      </view>
+      
+      <!-- 头像生成中状态 -->
+      <view class="avatar-generating" wx:if="{{avatarStatus === 'generating'}}">
+        <view class="generating-container">
+          <view class="generating-spinner"></view>
+          <text class="generating-title">专属头像生成中</text>
+          <text class="generating-text">AI正在为你绘制专属卡通形象，请稍等...</text>
+          <view class="generating-progress">
+            <text class="progress-text">进度：{{avatarPollAttempts}}/{{maxAvatarPollAttempts}}</text>
+            <view class="progress-bar-bg">
+              <view class="progress-bar-fill" style="width: {{Math.min(avatarPollAttempts * 100 / maxAvatarPollAttempts, 95)}}%"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 头像生成失败状态 -->
+      <view class="avatar-error" wx:if="{{avatarStatus === 'error'}}">
+        <view class="error-container">
+          <view class="error-icon">❌</view>
+          <text class="error-title">头像生成失败</text>
+          <text class="error-text">很抱歉，专属头像生成遇到了问题，但时尚分析已成功完成</text>
+        </view>
+      </view>
+      
+      <!-- 头像生成超时状态 -->
+      <view class="avatar-timeout" wx:if="{{avatarStatus === 'timeout'}}">
+        <view class="timeout-container">
+          <view class="timeout-icon">⏰</view>
+          <text class="timeout-title">头像生成超时</text>
+          <text class="timeout-text">头像生成时间较长，已超时停止，你可以稍后重试</text>
+        </view>
+      </view>
+      
+      <!-- 需要用户照片提示 -->
+      <view class="avatar-notice-box" wx:if="{{avatarStatus === 'no_user_images'}}">
+        <view class="notice-container">
+          <view class="notice-icon">📷</view>
+          <text class="notice-title">需要你的照片</text>
+          <text class="notice-text">要生成专属头像需要上传你的照片，下次记得上传哦</text>
+        </view>
+      </view>
+
+      <!-- 分析内容 -->
+      <view class="analysis-content">
+        <view class="content-card">
+          <view class="content-header">
+            <text class="content-title">💎 AI时尚顾问说：</text>
+          </view>
+          <view class="content-body">
+            <text class="analysis-text">{{analysisResult.content}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作按钮 -->
+      <view class="result-actions">
+        <button class="btn-share" bindtap="shareResult">分享给朋友</button>
+        <button class="btn-retry" bindtap="retryAnalysis">重新分析</button>
+      </view>
+
+      <!-- 满意度评价 -->
+      <view class="satisfaction-rating">
+        <view class="rating-title">对这次分析满意吗？</view>
+        <view class="rating-stars">
+          <view 
+            class="star {{index < rating ? 'star-filled' : ''}}" 
+            wx:for="{{5}}" 
+            wx:key="index"
+            bindtap="setRating"
+            data-rating="{{index + 1}}"
+          >
+            ⭐
+          </view>
+        </view>
+      </view>
+    </view>
+
+  </scroll-view>
+
+  <!-- 底部导航栏 -->
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="switchTab" data-tab="index">
+      <view class="nav-icon">🏠</view>
+      <text class="nav-text">首页</text>
+    </view>
+    
+    <view class="nav-item nav-active" bindtap="switchTab" data-tab="analysis">
+      <view class="nav-icon">🎯</view>
+      <text class="nav-text">AI分析</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchTab" data-tab="wardrobe">
+      <view class="nav-icon">👗</view>
+      <text class="nav-text">衣橱</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchTab" data-tab="profile">
+      <view class="nav-icon">👤</view>
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+</view>
+
+<!-- 图片预览弹窗 -->
+<view class="image-preview-modal" wx:if="{{showPreview}}" bindtap="closePreview">
+  <image class="preview-image" src="{{previewUrl}}" mode="aspectFit"></image>
+</view>
+
+<!-- AI悬浮球 -->
+<ai-floating-bot 
+  visible="{{true}}"
+  is-online="{{true}}"
+  message-count="{{0}}"
+  bind:botclick="onAIBotClick"
+  pageContext="style_analysis">
+</ai-floating-bot>

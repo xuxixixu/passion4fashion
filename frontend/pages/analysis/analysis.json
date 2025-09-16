@@ -1,0 +1,13 @@
+{
+    "navigationBarTitleText": "AI风格分析",
+    "navigationBarBackgroundColor": "#667eea",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f8f8f8",
+    "enablePullDownRefresh": false,
+    "onReachBottomDistance": 50,
+    "backgroundColorTop": "#667eea",
+    "backgroundColorBottom": "#764ba2",
+    "usingComponents": {
+        "ai-floating-bot": "/components/ai-floating-bot/ai-floating-bot"
+    }
+}

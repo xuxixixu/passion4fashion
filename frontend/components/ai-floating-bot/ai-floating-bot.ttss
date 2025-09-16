@@ -1,0 +1,246 @@
+/* components/ai-floating-bot/ai-floating-bot.ttss */
+/* 聊天按钮 */
+.ai-floating-bot {
+  position: fixed; /* 使用fixed定位使其脱离文档流 */
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 99%, #fad0c4 100%);
+  box-shadow: 0 4px 12px rgba(255, 153, 153, 0.5);
+  z-index: 9999; /* 设置最高层级确保在所有元素之上 */
+  transition: all 0s ease;
+  cursor: move;
+  pointer-events: auto; /* 确保可以接收触摸事件 */
+}
+
+.chat-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+/* Dragging state styles */
+.ai-floating-bot.dragging {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(255, 153, 153, 0.7);
+  opacity: 0.9;
+}
+
+
+
+/* 主体容器 */
+.bot-container {
+  position: relative;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  box-shadow: 
+    0 8rpx 32rpx rgba(102, 126, 234, 0.3),
+    0 4rpx 16rpx rgba(102, 126, 234, 0.2),
+    inset 0 2rpx 8rpx rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(1);
+}
+
+.bot-container.dragging {
+  transform: scale(1.1);
+  box-shadow: 
+    0 12rpx 48rpx rgba(102, 126, 234, 0.4),
+    0 6rpx 24rpx rgba(102, 126, 234, 0.3),
+    inset 0 2rpx 8rpx rgba(255, 255, 255, 0.3);
+}
+
+/* AI机器人头像区域 */
+.bot-avatar {
+  position: relative;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10rpx);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.bot-image {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  filter: brightness(1.1) contrast(1.1);
+}
+
+/* 动态光点效果 */
+.light-dot {
+  position: absolute;
+  width: 6rpx;
+  height: 6rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  animation: float 3s ease-in-out infinite;
+}
+
+.dot-1 {
+  top: 15rpx;
+  left: 20rpx;
+  animation-delay: 0s;
+}
+
+.dot-2 {
+  top: 25rpx;
+  right: 15rpx;
+  animation-delay: 1s;
+  animation-duration: 2.5s;
+}
+
+.dot-3 {
+  bottom: 20rpx;
+  left: 25rpx;
+  animation-delay: 2s;
+  animation-duration: 3.5s;
+}
+
+@keyframes float {
+  0%, 100% { 
+    opacity: 0.3;
+    transform: translateY(0rpx) scale(0.8);
+  }
+  50% { 
+    opacity: 1;
+    transform: translateY(-8rpx) scale(1.2);
+  }
+}
+
+/* 在线状态指示器 */
+.status-indicator {
+  position: absolute;
+  bottom: 8rpx;
+  right: 8rpx;
+  width: 24rpx;
+  height: 24rpx;
+  border-radius: 50%;
+  border: 4rpx solid rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+
+.status-indicator.online {
+  background: #00ff88;
+  box-shadow: 0 0 12rpx rgba(0, 255, 136, 0.6);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.status-indicator.offline {
+  background: #ff4757;
+  box-shadow: 0 0 12rpx rgba(255, 71, 87, 0.6);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+
+/* 消息提示红点 */
+.message-badge {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  border-radius: 16rpx;
+  background: linear-gradient(135deg, #ff4757, #ff3838);
+  color: white;
+  font-size: 20rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(255, 71, 87, 0.4);
+  transform: scale(0);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border: 3rpx solid rgba(255, 255, 255, 0.9);
+}
+
+.message-badge.show {
+  transform: scale(1);
+  animation: bounce 0.6s ease;
+}
+
+@keyframes bounce {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* 点击波纹效果 */
+.ripple-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.ripple-effect.animate {
+  animation: ripple 0.6s ease-out;
+}
+
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 240rpx;
+    height: 240rpx;
+    opacity: 0;
+  }
+}
+
+/* 悬停效果增强 */
+.ai-floating-bot:active .bot-container {
+  transform: scale(0.95);
+}
+
+/* 适配不同屏幕 */
+@media (max-width: 750rpx) {
+  .ai-floating-bot {
+    width: 100rpx;
+    height: 100rpx;
+  }
+  
+  .bot-halo {
+    width: 120rpx;
+    height: 120rpx;
+    top: -10rpx;
+    left: -10rpx;
+  }
+  
+  .bot-container {
+    width: 100rpx;
+    height: 100rpx;
+  }
+  
+  .bot-avatar {
+    width: 70rpx;
+    height: 70rpx;
+  }
+  
+  .bot-image {
+    width: 50rpx;
+    height: 50rpx;
+  }
+}

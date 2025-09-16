@@ -1,0 +1,120 @@
+<!--components/ai-chat-dialog/ai-chat-dialog.ttml-->
+<view class="ai-chat-dialog {{visible ? 'show' : ''}}" style="left: {{position.x}}px; top: {{position.y}}px;">
+  <!-- 对话框头部 -->
+  <view class="dialog-header">
+    <view class="header-left">
+      <image src="/imgs/bot.png" class="bot-avatar"></image>
+      <view class="bot-info">
+        <text class="bot-name">AI穿搭助手</text>
+        <text class="bot-status">{{isTyping ? '正在输入...' : '在线'}}</text>
+      </view>
+    </view>
+    <view class="header-right">
+      <view class="close-btn" bindtap="onClose">
+        <text class="close-icon">×</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 对话内容区 -->
+  <scroll-view class="chat-content" scroll-y="{{true}}" scroll-top="{{scrollTop}}" scroll-into-view="{{scrollIntoView}}">
+    <view class="message-list">
+      <view wx:for="{{messages}}" wx:key="id" class="message-item {{item.type}}" id="msg-{{item.id}}">
+        <view class="message-avatar">
+          <image wx:if="{{item.type === 'ai'}}" src="/imgs/bot.png" class="avatar"></image>
+          <view wx:else class="user-avatar">我</view>
+        </view>
+        <view class="message-content">
+          <view wx:if="{{item.messageType === 'text'}}" class="text-message">{{item.content}}</view>
+          <view wx:elif="{{item.messageType === 'image'}}" class="image-message">
+            <image src="{{item.content}}" class="chat-image" mode="aspectFit" bindtap="onImagePreview" data-src="{{item.content}}"></image>
+          </view>
+          <view wx:elif="{{item.messageType === 'video'}}" class="video-message">
+            <video src="{{item.content}}" class="chat-video" controls></video>
+          </view>
+          <text class="message-time">{{item.time}}</text>
+        </view>
+      </view>
+      
+      <!-- 加载状态 -->
+      <view wx:if="{{isLoading}}" class="message-item ai loading">
+        <view class="message-avatar">
+          <image src="/imgs/bot.png" class="avatar"></image>
+        </view>
+        <view class="message-content">
+          <view class="loading-dots">
+            <view class="dot"></view>
+            <view class="dot"></view>
+            <view class="dot"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 输入区域 -->
+  <view class="input-area">
+    <!-- 附件预览 -->
+    <view wx:if="{{previewMedia.length > 0}}" class="media-preview">
+      <view wx:for="{{previewMedia}}" wx:key="index" class="preview-item">
+        <image wx:if="{{item.type === 'image'}}" src="{{item.url}}" class="preview-image"></image>
+        <video wx:elif="{{item.type === 'video'}}" src="{{item.url}}" class="preview-video" controls="{{false}}"></video>
+        <view class="remove-btn" bindtap="removePreviewMedia" data-index="{{index}}">×</view>
+      </view>
+    </view>
+    
+    <!-- 输入框和功能按钮 -->
+    <view class="input-row">
+      <view class="input-left">
+        <view class="media-btn" bindtap="onSelectMedia">
+          <text class="media-icon">+</text>
+        </view>
+      </view>
+      <view class="input-center">
+        <textarea 
+          class="text-input" 
+          placeholder="请输入消息..." 
+          value="{{inputText}}"
+          bindinput="onInputChange"
+          auto-height="{{true}}"
+          maxlength="500"
+          show-confirm-bar="{{false}}"
+        ></textarea>
+      </view>
+      <view class="input-right">
+        <view class="send-btn {{inputText.length > 0 || previewMedia.length > 0 ? 'active' : ''}}" bindtap="onSendMessage">
+          <text class="send-icon">发送</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 遮罩层 -->
+<view wx:if="{{visible}}" class="dialog-mask" bindtap="onMaskClick"></view>
+
+<!-- 媒体选择弹窗 -->
+<view class="media-selector {{showMediaSelector ? 'show' : ''}}">
+  <view class="selector-content">
+    <view class="selector-title">选择媒体类型</view>
+    <view class="selector-options">
+      <view class="option-item" bindtap="onChooseImage">
+        <text class="option-icon">📷</text>
+        <text class="option-text">选择图片</text>
+      </view>
+      <view class="option-item" bindtap="onTakePhoto">
+        <text class="option-icon">📸</text>
+        <text class="option-text">拍照</text>
+      </view>
+      <view class="option-item" bindtap="onChooseVideo">
+        <text class="option-icon">🎥</text>
+        <text class="option-text">选择视频</text>
+      </view>
+      <view class="option-item" bindtap="onRecordVideo">
+        <text class="option-icon">📹</text>
+        <text class="option-text">录制视频</text>
+      </view>
+    </view>
+    <view class="selector-cancel" bindtap="onCancelMediaSelector">取消</view>
+  </view>
+</view>

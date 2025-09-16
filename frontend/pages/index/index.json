@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "AI穿搭助手",
+  "navigationBarBackgroundColor": "#ff6b9d",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#ffeaa7",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50,
+  "usingComponents": {
+    "ai-floating-bot": "/components/ai-floating-bot/ai-floating-bot"
+  }
+}

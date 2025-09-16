@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "ai-floating-bot": "../../components/ai-floating-bot/ai-floating-bot"
+  },
+  "navigationBarTitleText": "AI助手测试"
+}

@@ -1,0 +1,13 @@
+{
+    "navigationBarTitleText": "个人中心",
+    "navigationBarBackgroundColor": "#764ba2",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#ffeaa7",
+    "enablePullDownRefresh": true,
+    "onReachBottomDistance": 50,
+    "backgroundColorTop": "#764ba2",
+    "backgroundColorBottom": "#f093fb",
+    "usingComponents": {
+        "ai-floating-bot": "/components/ai-floating-bot/ai-floating-bot"
+    }
+}
